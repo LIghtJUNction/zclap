@@ -1,0 +1,3494 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-11-09T18:34:21.007245+00:00",
+    "git_commit": "9663b7c0fdc4f2a2738cf6516ae7a95a34f7279e",
+    "git_dirty": true,
+    "source_sha256": {
+      "Cargo.toml": "0b02aefb75d1e3b70725651be4d2986fac5cf27baf34883fec8e1cca6156daf4",
+      "comparison/Cargo.lock": "0859a379931ccda9ba14d78bcb108caf9f603e6a183637e5b306e75a0ba245b0",
+      "comparison/Cargo.toml": "0cf9ebb710993c6bb874abf5c45e59bfc0503cd2dc7ff62eda309af3e389a971",
+      "comparison/src/bin/size_clap.rs": "7009dcd070d16b1b015e56be22824f57da31555d4e68383d7489384657847c0c",
+      "comparison/src/bin/size_clap_lex.rs": "6482df0f02e5f1f243ac27bb4ce31243c3811f0fcc0863601340bd6697616f25",
+      "comparison/src/bin/size_lexopt.rs": "c30d4310afc2953d67d57e898f49488f5df6e55767c1820c6485dd36c45febda",
+      "comparison/src/bin/size_pico_args.rs": "6d645cae2f9a28cc4addde6e1064cdf7ed6a075a94adbc277c6f42fc4813da2b",
+      "comparison/src/bin/size_zclap.rs": "dacba12a87149c64fe1718a243f514f86c0a98163c289d262dd87c0bfc11c33d",
+      "comparison/src/lib.rs": "f7c0387f9eec83e660d8255cc3cdd08f942f43a3039e10e2fd5bf59abc8581db",
+      "comparison/src/main.rs": "ac1aa553df0e43781f01951c71e1959dcdd3b2169f8e14920ad0aec26fb13ccd",
+      "src/input.rs": "67d2b6e28db684ce562ab9da1593157e01028b1f48c7dffa99eaa5609fc2815e",
+      "src/lib.rs": "801606500a529e70b113c58f76efec13ecb9ac0a37974e72bf612567a91b0404",
+      "src/style.rs": "7ee1920bf42702e009e0e9164d07b0584d3f890908610658d4d18a4e395caad9"
+    },
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.1\nLLVM version: 23.1.1",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "os": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "pinned_cpu": 0,
+    "build_target_directory": "/tmp/zclap-comparison-target",
+    "profile": {
+      "opt_level": 3,
+      "lto": "thin",
+      "codegen_units": 1,
+      "strip": true
+    },
+    "rustflags": "",
+    "packages": {
+      "anstyle": "1.0.14",
+      "clap": "4.6.7",
+      "clap_builder": "4.6.7",
+      "clap_lex": "1.1.1",
+      "lexopt": "0.3.2",
+      "pico-args": "0.5.0",
+      "zclap": "0.1.0",
+      "zclap-comparison": "0.0.0"
+    },
+    "notes": [
+      "Shared cloud host; CPU affinity is used where supported; turbo and neighboring workloads are not controlled.",
+      "Timing builds have no counting allocator. Allocation builds count alloc, alloc_zeroed and realloc calls separately from timing.",
+      "Definitions are prepared once outside the timed loop. Every parse includes input ownership required by each API, semantic validation, result reading and drop.",
+      "Build timings start with an empty target directory and use a warm local registry cache; network download time is excluded."
+    ]
+  },
+  "parameters": {
+    "label": "baseline",
+    "rounds": 5,
+    "millis": 30,
+    "compile_rounds": 3,
+    "skip_build_metrics": true,
+    "metrics_only": false,
+    "cpu": null
+  },
+  "timing": [
+    {
+      "scenario": "sparse",
+      "options": 4,
+      "parser": "zclap",
+      "min_ns": 191.124,
+      "median_ns": 200.169,
+      "max_ns": 217.399,
+      "median_parses_per_second": 4995778.567110791,
+      "relative_range_percent": 13.126408185083607,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 118791,
+          "ns_per_parse": 217.399,
+          "parses_per_second": 4599846.714
+        },
+        {
+          "round": 1,
+          "iterations": 118791,
+          "ns_per_parse": 200.169,
+          "parses_per_second": 4995777.869
+        },
+        {
+          "round": 2,
+          "iterations": 118791,
+          "ns_per_parse": 191.124,
+          "parses_per_second": 5232218.195
+        },
+        {
+          "round": 3,
+          "iterations": 118791,
+          "ns_per_parse": 193.195,
+          "parses_per_second": 5176105.27
+        },
+        {
+          "round": 4,
+          "iterations": 118791,
+          "ns_per_parse": 207.413,
+          "parses_per_second": 4821304.377
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 4,
+      "parser": "clap",
+      "min_ns": 2851.336,
+      "median_ns": 3382.537,
+      "max_ns": 3498.926,
+      "median_parses_per_second": 295636.0861684588,
+      "relative_range_percent": 19.145097304183224,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 10046,
+          "ns_per_parse": 3403.453,
+          "parses_per_second": 293819.212
+        },
+        {
+          "round": 1,
+          "iterations": 10046,
+          "ns_per_parse": 3498.926,
+          "parses_per_second": 285801.999
+        },
+        {
+          "round": 2,
+          "iterations": 10046,
+          "ns_per_parse": 3245.09,
+          "parses_per_second": 308157.836
+        },
+        {
+          "round": 3,
+          "iterations": 10046,
+          "ns_per_parse": 3382.537,
+          "parses_per_second": 295636.11
+        },
+        {
+          "round": 4,
+          "iterations": 10046,
+          "ns_per_parse": 2851.336,
+          "parses_per_second": 350712.831
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 4,
+      "parser": "lexopt",
+      "min_ns": 353.9,
+      "median_ns": 439.27,
+      "max_ns": 473.841,
+      "median_parses_per_second": 2276504.2001502495,
+      "relative_range_percent": 27.304619027022113,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 74023,
+          "ns_per_parse": 473.841,
+          "parses_per_second": 2110412.284
+        },
+        {
+          "round": 1,
+          "iterations": 74023,
+          "ns_per_parse": 357.199,
+          "parses_per_second": 2799562.617
+        },
+        {
+          "round": 2,
+          "iterations": 74023,
+          "ns_per_parse": 353.9,
+          "parses_per_second": 2825656.933
+        },
+        {
+          "round": 3,
+          "iterations": 74023,
+          "ns_per_parse": 439.27,
+          "parses_per_second": 2276505.265
+        },
+        {
+          "round": 4,
+          "iterations": 74023,
+          "ns_per_parse": 464.141,
+          "parses_per_second": 2154515.834
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 4,
+      "parser": "pico-args",
+      "min_ns": 237.069,
+      "median_ns": 266.361,
+      "max_ns": 275.869,
+      "median_parses_per_second": 3754303.3702381356,
+      "relative_range_percent": 14.566697076523983,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 119702,
+          "ns_per_parse": 259.785,
+          "parses_per_second": 3849338.693
+        },
+        {
+          "round": 1,
+          "iterations": 119702,
+          "ns_per_parse": 275.869,
+          "parses_per_second": 3624911.563
+        },
+        {
+          "round": 2,
+          "iterations": 119702,
+          "ns_per_parse": 274.082,
+          "parses_per_second": 3648544.423
+        },
+        {
+          "round": 3,
+          "iterations": 119702,
+          "ns_per_parse": 237.069,
+          "parses_per_second": 4218172.946
+        },
+        {
+          "round": 4,
+          "iterations": 119702,
+          "ns_per_parse": 266.361,
+          "parses_per_second": 3754303.302
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 4,
+      "parser": "clap_lex",
+      "min_ns": 379.829,
+      "median_ns": 421.623,
+      "max_ns": 487.941,
+      "median_parses_per_second": 2371787.117875448,
+      "relative_range_percent": 25.641864888775036,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 68639,
+          "ns_per_parse": 433.501,
+          "parses_per_second": 2306797.284
+        },
+        {
+          "round": 1,
+          "iterations": 68639,
+          "ns_per_parse": 379.829,
+          "parses_per_second": 2632761.644
+        },
+        {
+          "round": 2,
+          "iterations": 68639,
+          "ns_per_parse": 421.623,
+          "parses_per_second": 2371788.601
+        },
+        {
+          "round": 3,
+          "iterations": 68639,
+          "ns_per_parse": 487.941,
+          "parses_per_second": 2049428.003
+        },
+        {
+          "round": 4,
+          "iterations": 68639,
+          "ns_per_parse": 386.867,
+          "parses_per_second": 2584870.589
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 4,
+      "parser": "zclap",
+      "min_ns": 198.666,
+      "median_ns": 209.037,
+      "max_ns": 280.371,
+      "median_parses_per_second": 4783842.09494013,
+      "relative_range_percent": 39.08638183670832,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 140347,
+          "ns_per_parse": 198.666,
+          "parses_per_second": 5033572.512
+        },
+        {
+          "round": 1,
+          "iterations": 140347,
+          "ns_per_parse": 209.037,
+          "parses_per_second": 4783842.232
+        },
+        {
+          "round": 2,
+          "iterations": 140347,
+          "ns_per_parse": 200.374,
+          "parses_per_second": 4990678.948
+        },
+        {
+          "round": 3,
+          "iterations": 140347,
+          "ns_per_parse": 280.371,
+          "parses_per_second": 3566699.766
+        },
+        {
+          "round": 4,
+          "iterations": 140347,
+          "ns_per_parse": 214.256,
+          "parses_per_second": 4667313.065
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 4,
+      "parser": "clap",
+      "min_ns": 2736.667,
+      "median_ns": 2981.333,
+      "max_ns": 3791.562,
+      "median_parses_per_second": 335420.43106221274,
+      "relative_range_percent": 35.383333562537295,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 9245,
+          "ns_per_parse": 2932.332,
+          "parses_per_second": 341025.521
+        },
+        {
+          "round": 1,
+          "iterations": 9245,
+          "ns_per_parse": 3340.348,
+          "parses_per_second": 299369.979
+        },
+        {
+          "round": 2,
+          "iterations": 9245,
+          "ns_per_parse": 2736.667,
+          "parses_per_second": 365407.972
+        },
+        {
+          "round": 3,
+          "iterations": 9245,
+          "ns_per_parse": 3791.562,
+          "parses_per_second": 263743.519
+        },
+        {
+          "round": 4,
+          "iterations": 9245,
+          "ns_per_parse": 2981.333,
+          "parses_per_second": 335420.475
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 4,
+      "parser": "lexopt",
+      "min_ns": 364.573,
+      "median_ns": 378.316,
+      "max_ns": 504.021,
+      "median_parses_per_second": 2643292.908573785,
+      "relative_range_percent": 36.86019095147973,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 61834,
+          "ns_per_parse": 364.573,
+          "parses_per_second": 2742935.479
+        },
+        {
+          "round": 1,
+          "iterations": 61834,
+          "ns_per_parse": 482.637,
+          "parses_per_second": 2071951.059
+        },
+        {
+          "round": 2,
+          "iterations": 61834,
+          "ns_per_parse": 369.811,
+          "parses_per_second": 2704086.742
+        },
+        {
+          "round": 3,
+          "iterations": 61834,
+          "ns_per_parse": 378.316,
+          "parses_per_second": 2643290.823
+        },
+        {
+          "round": 4,
+          "iterations": 61834,
+          "ns_per_parse": 504.021,
+          "parses_per_second": 1984043.011
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 4,
+      "parser": "pico-args",
+      "min_ns": 245.047,
+      "median_ns": 285.911,
+      "max_ns": 566.447,
+      "median_parses_per_second": 3497591.9079713617,
+      "relative_range_percent": 112.41260392219957,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 115892,
+          "ns_per_parse": 261.792,
+          "parses_per_second": 3819822.205
+        },
+        {
+          "round": 1,
+          "iterations": 115892,
+          "ns_per_parse": 566.447,
+          "parses_per_second": 1765391.729
+        },
+        {
+          "round": 2,
+          "iterations": 115892,
+          "ns_per_parse": 285.911,
+          "parses_per_second": 3497591.128
+        },
+        {
+          "round": 3,
+          "iterations": 115892,
+          "ns_per_parse": 245.047,
+          "parses_per_second": 4080849.929
+        },
+        {
+          "round": 4,
+          "iterations": 115892,
+          "ns_per_parse": 381.094,
+          "parses_per_second": 2624023.262
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 4,
+      "parser": "clap_lex",
+      "min_ns": 357.852,
+      "median_ns": 385.717,
+      "max_ns": 610.501,
+      "median_parses_per_second": 2592574.348550881,
+      "relative_range_percent": 65.50113165870314,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 67562,
+          "ns_per_parse": 387.781,
+          "parses_per_second": 2578774.043
+        },
+        {
+          "round": 1,
+          "iterations": 67562,
+          "ns_per_parse": 357.852,
+          "parses_per_second": 2794454.091
+        },
+        {
+          "round": 2,
+          "iterations": 67562,
+          "ns_per_parse": 364.675,
+          "parses_per_second": 2742169.058
+        },
+        {
+          "round": 3,
+          "iterations": 67562,
+          "ns_per_parse": 610.501,
+          "parses_per_second": 1637999.136
+        },
+        {
+          "round": 4,
+          "iterations": 67562,
+          "ns_per_parse": 385.717,
+          "parses_per_second": 2592571.857
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 8,
+      "parser": "zclap",
+      "min_ns": 249.667,
+      "median_ns": 294.492,
+      "max_ns": 311.213,
+      "median_parses_per_second": 3395677.9810656994,
+      "relative_range_percent": 20.89903970226696,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 119867,
+          "ns_per_parse": 262.269,
+          "parses_per_second": 3812878.443
+        },
+        {
+          "round": 1,
+          "iterations": 119867,
+          "ns_per_parse": 249.667,
+          "parses_per_second": 4005340.231
+        },
+        {
+          "round": 2,
+          "iterations": 119867,
+          "ns_per_parse": 309.949,
+          "parses_per_second": 3226340.257
+        },
+        {
+          "round": 3,
+          "iterations": 119867,
+          "ns_per_parse": 294.492,
+          "parses_per_second": 3395672.264
+        },
+        {
+          "round": 4,
+          "iterations": 119867,
+          "ns_per_parse": 311.213,
+          "parses_per_second": 3213233.18
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 8,
+      "parser": "clap",
+      "min_ns": 5317.249,
+      "median_ns": 5433.963,
+      "max_ns": 5660.313,
+      "median_parses_per_second": 184027.75285735293,
+      "relative_range_percent": 6.313329700625498,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 4844,
+          "ns_per_parse": 5317.249,
+          "parses_per_second": 188067.169
+        },
+        {
+          "round": 1,
+          "iterations": 4844,
+          "ns_per_parse": 5577.833,
+          "parses_per_second": 179281.087
+        },
+        {
+          "round": 2,
+          "iterations": 4844,
+          "ns_per_parse": 5433.963,
+          "parses_per_second": 184027.758
+        },
+        {
+          "round": 3,
+          "iterations": 4844,
+          "ns_per_parse": 5350.417,
+          "parses_per_second": 186901.312
+        },
+        {
+          "round": 4,
+          "iterations": 4844,
+          "ns_per_parse": 5660.313,
+          "parses_per_second": 176668.67
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 8,
+      "parser": "lexopt",
+      "min_ns": 329.871,
+      "median_ns": 421.249,
+      "max_ns": 554.856,
+      "median_parses_per_second": 2373892.8757100906,
+      "relative_range_percent": 53.409028864163474,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 57334,
+          "ns_per_parse": 350.567,
+          "parses_per_second": 2852522.393
+        },
+        {
+          "round": 1,
+          "iterations": 57334,
+          "ns_per_parse": 421.249,
+          "parses_per_second": 2373890.926
+        },
+        {
+          "round": 2,
+          "iterations": 57334,
+          "ns_per_parse": 329.871,
+          "parses_per_second": 3031484.046
+        },
+        {
+          "round": 3,
+          "iterations": 57334,
+          "ns_per_parse": 554.856,
+          "parses_per_second": 1802268.222
+        },
+        {
+          "round": 4,
+          "iterations": 57334,
+          "ns_per_parse": 499.66,
+          "parses_per_second": 2001360.747
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 8,
+      "parser": "pico-args",
+      "min_ns": 394.951,
+      "median_ns": 424.061,
+      "max_ns": 426.045,
+      "median_parses_per_second": 2358151.3037039484,
+      "relative_range_percent": 7.332435663737055,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 79423,
+          "ns_per_parse": 424.061,
+          "parses_per_second": 2358149.259
+        },
+        {
+          "round": 1,
+          "iterations": 79423,
+          "ns_per_parse": 394.951,
+          "parses_per_second": 2531957.746
+        },
+        {
+          "round": 2,
+          "iterations": 79423,
+          "ns_per_parse": 425.818,
+          "parses_per_second": 2348420.394
+        },
+        {
+          "round": 3,
+          "iterations": 79423,
+          "ns_per_parse": 426.045,
+          "parses_per_second": 2347170.388
+        },
+        {
+          "round": 4,
+          "iterations": 79423,
+          "ns_per_parse": 410.452,
+          "parses_per_second": 2436338.64
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 8,
+      "parser": "clap_lex",
+      "min_ns": 438.505,
+      "median_ns": 447.699,
+      "max_ns": 456.066,
+      "median_parses_per_second": 2233643.586427488,
+      "relative_range_percent": 3.922501502125307,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 69855,
+          "ns_per_parse": 439.563,
+          "parses_per_second": 2274986.331
+        },
+        {
+          "round": 1,
+          "iterations": 69855,
+          "ns_per_parse": 455.398,
+          "parses_per_second": 2195882.598
+        },
+        {
+          "round": 2,
+          "iterations": 69855,
+          "ns_per_parse": 456.066,
+          "parses_per_second": 2192663.681
+        },
+        {
+          "round": 3,
+          "iterations": 69855,
+          "ns_per_parse": 438.505,
+          "parses_per_second": 2280474.053
+        },
+        {
+          "round": 4,
+          "iterations": 69855,
+          "ns_per_parse": 447.699,
+          "parses_per_second": 2233641.918
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 8,
+      "parser": "zclap",
+      "min_ns": 418.578,
+      "median_ns": 486.187,
+      "max_ns": 553.205,
+      "median_parses_per_second": 2056821.7578832835,
+      "relative_range_percent": 27.690374279855295,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 58469,
+          "ns_per_parse": 553.205,
+          "parses_per_second": 1807646.77
+        },
+        {
+          "round": 1,
+          "iterations": 58469,
+          "ns_per_parse": 486.187,
+          "parses_per_second": 2056823.328
+        },
+        {
+          "round": 2,
+          "iterations": 58469,
+          "ns_per_parse": 418.578,
+          "parses_per_second": 2389039.633
+        },
+        {
+          "round": 3,
+          "iterations": 58469,
+          "ns_per_parse": 455.235,
+          "parses_per_second": 2196667.508
+        },
+        {
+          "round": 4,
+          "iterations": 58469,
+          "ns_per_parse": 535.31,
+          "parses_per_second": 1868075.987
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 8,
+      "parser": "clap",
+      "min_ns": 6827.941,
+      "median_ns": 7881.34,
+      "max_ns": 9637.847,
+      "median_parses_per_second": 126881.97692270603,
+      "relative_range_percent": 35.652642824697324,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 203,
+          "ns_per_parse": 6827.941,
+          "parses_per_second": 146457.038
+        },
+        {
+          "round": 1,
+          "iterations": 203,
+          "ns_per_parse": 8396.99,
+          "parses_per_second": 119090.291
+        },
+        {
+          "round": 2,
+          "iterations": 203,
+          "ns_per_parse": 7881.34,
+          "parses_per_second": 126881.979
+        },
+        {
+          "round": 3,
+          "iterations": 203,
+          "ns_per_parse": 7593.882,
+          "parses_per_second": 131684.958
+        },
+        {
+          "round": 4,
+          "iterations": 203,
+          "ns_per_parse": 9637.847,
+          "parses_per_second": 103757.61
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 8,
+      "parser": "lexopt",
+      "min_ns": 721.037,
+      "median_ns": 776.83,
+      "max_ns": 1061.281,
+      "median_parses_per_second": 1287282.9319156057,
+      "relative_range_percent": 43.799029388669325,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 38408,
+          "ns_per_parse": 806.214,
+          "parses_per_second": 1240365.354
+        },
+        {
+          "round": 1,
+          "iterations": 38408,
+          "ns_per_parse": 767.926,
+          "parses_per_second": 1302208.842
+        },
+        {
+          "round": 2,
+          "iterations": 38408,
+          "ns_per_parse": 776.83,
+          "parses_per_second": 1287283.736
+        },
+        {
+          "round": 3,
+          "iterations": 38408,
+          "ns_per_parse": 721.037,
+          "parses_per_second": 1386891.585
+        },
+        {
+          "round": 4,
+          "iterations": 38408,
+          "ns_per_parse": 1061.281,
+          "parses_per_second": 942257.416
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 8,
+      "parser": "pico-args",
+      "min_ns": 637.997,
+      "median_ns": 715.553,
+      "max_ns": 1363.197,
+      "median_parses_per_second": 1397520.5190950215,
+      "relative_range_percent": 101.34818804477095,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 47846,
+          "ns_per_parse": 715.553,
+          "parses_per_second": 1397521.043
+        },
+        {
+          "round": 1,
+          "iterations": 47846,
+          "ns_per_parse": 704.667,
+          "parses_per_second": 1419110.2
+        },
+        {
+          "round": 2,
+          "iterations": 47846,
+          "ns_per_parse": 952.748,
+          "parses_per_second": 1049595.965
+        },
+        {
+          "round": 3,
+          "iterations": 47846,
+          "ns_per_parse": 637.997,
+          "parses_per_second": 1567406.283
+        },
+        {
+          "round": 4,
+          "iterations": 47846,
+          "ns_per_parse": 1363.197,
+          "parses_per_second": 733569.686
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 8,
+      "parser": "clap_lex",
+      "min_ns": 822.954,
+      "median_ns": 898.931,
+      "max_ns": 1033.591,
+      "median_parses_per_second": 1112432.433635062,
+      "relative_range_percent": 23.43194305235885,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 18158,
+          "ns_per_parse": 899.484,
+          "parses_per_second": 1111747.933
+        },
+        {
+          "round": 1,
+          "iterations": 18158,
+          "ns_per_parse": 898.931,
+          "parses_per_second": 1112431.895
+        },
+        {
+          "round": 2,
+          "iterations": 18158,
+          "ns_per_parse": 838.638,
+          "parses_per_second": 1192410.287
+        },
+        {
+          "round": 3,
+          "iterations": 18158,
+          "ns_per_parse": 1033.591,
+          "parses_per_second": 967501.065
+        },
+        {
+          "round": 4,
+          "iterations": 18158,
+          "ns_per_parse": 822.954,
+          "parses_per_second": 1215134.481
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 16,
+      "parser": "zclap",
+      "min_ns": 258.09,
+      "median_ns": 274.991,
+      "max_ns": 378.084,
+      "median_parses_per_second": 3636482.648523043,
+      "relative_range_percent": 43.63560989268741,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 17285,
+          "ns_per_parse": 258.09,
+          "parses_per_second": 3874617.078
+        },
+        {
+          "round": 1,
+          "iterations": 17285,
+          "ns_per_parse": 270.625,
+          "parses_per_second": 3695151.004
+        },
+        {
+          "round": 2,
+          "iterations": 17285,
+          "ns_per_parse": 378.084,
+          "parses_per_second": 2644917.291
+        },
+        {
+          "round": 3,
+          "iterations": 17285,
+          "ns_per_parse": 342.942,
+          "parses_per_second": 2915948.153
+        },
+        {
+          "round": 4,
+          "iterations": 17285,
+          "ns_per_parse": 274.991,
+          "parses_per_second": 3636482.981
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 16,
+      "parser": "clap",
+      "min_ns": 6850.409,
+      "median_ns": 8333.201,
+      "max_ns": 9987.26,
+      "median_parses_per_second": 120001.90563026142,
+      "relative_range_percent": 37.642809767819124,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 3614,
+          "ns_per_parse": 6850.409,
+          "parses_per_second": 145976.686
+        },
+        {
+          "round": 1,
+          "iterations": 3614,
+          "ns_per_parse": 6974.495,
+          "parses_per_second": 143379.55
+        },
+        {
+          "round": 2,
+          "iterations": 3614,
+          "ns_per_parse": 9987.26,
+          "parses_per_second": 100127.559
+        },
+        {
+          "round": 3,
+          "iterations": 3614,
+          "ns_per_parse": 8333.201,
+          "parses_per_second": 120001.911
+        },
+        {
+          "round": 4,
+          "iterations": 3614,
+          "ns_per_parse": 8516.958,
+          "parses_per_second": 117412.81
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 16,
+      "parser": "lexopt",
+      "min_ns": 350.331,
+      "median_ns": 370.893,
+      "max_ns": 423.016,
+      "median_parses_per_second": 2696195.3986729328,
+      "relative_range_percent": 19.59729625525421,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 70563,
+          "ns_per_parse": 423.016,
+          "parses_per_second": 2363976.381
+        },
+        {
+          "round": 1,
+          "iterations": 70563,
+          "ns_per_parse": 350.331,
+          "parses_per_second": 2854446.412
+        },
+        {
+          "round": 2,
+          "iterations": 70563,
+          "ns_per_parse": 375.065,
+          "parses_per_second": 2666201.965
+        },
+        {
+          "round": 3,
+          "iterations": 70563,
+          "ns_per_parse": 359.108,
+          "parses_per_second": 2784675.81
+        },
+        {
+          "round": 4,
+          "iterations": 70563,
+          "ns_per_parse": 370.893,
+          "parses_per_second": 2696195.683
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 16,
+      "parser": "pico-args",
+      "min_ns": 682.867,
+      "median_ns": 769.082,
+      "max_ns": 1053.126,
+      "median_parses_per_second": 1300251.4686340338,
+      "relative_range_percent": 48.142980852496876,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 40824,
+          "ns_per_parse": 945.831,
+          "parses_per_second": 1057271.269
+        },
+        {
+          "round": 1,
+          "iterations": 40824,
+          "ns_per_parse": 682.867,
+          "parses_per_second": 1464414.817
+        },
+        {
+          "round": 2,
+          "iterations": 40824,
+          "ns_per_parse": 757.762,
+          "parses_per_second": 1319675.438
+        },
+        {
+          "round": 3,
+          "iterations": 40824,
+          "ns_per_parse": 1053.126,
+          "parses_per_second": 949553.659
+        },
+        {
+          "round": 4,
+          "iterations": 40824,
+          "ns_per_parse": 769.082,
+          "parses_per_second": 1300251.741
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 16,
+      "parser": "clap_lex",
+      "min_ns": 367.102,
+      "median_ns": 382.15,
+      "max_ns": 499.776,
+      "median_parses_per_second": 2616773.5182519956,
+      "relative_range_percent": 34.71778097605653,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 83057,
+          "ns_per_parse": 382.15,
+          "parses_per_second": 2616774.965
+        },
+        {
+          "round": 1,
+          "iterations": 83057,
+          "ns_per_parse": 367.102,
+          "parses_per_second": 2724037.641
+        },
+        {
+          "round": 2,
+          "iterations": 83057,
+          "ns_per_parse": 499.776,
+          "parses_per_second": 2000895.159
+        },
+        {
+          "round": 3,
+          "iterations": 83057,
+          "ns_per_parse": 381.692,
+          "parses_per_second": 2619913.062
+        },
+        {
+          "round": 4,
+          "iterations": 83057,
+          "ns_per_parse": 401.424,
+          "parses_per_second": 2491132.032
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 16,
+      "parser": "zclap",
+      "min_ns": 1006.342,
+      "median_ns": 1157.563,
+      "max_ns": 1392.111,
+      "median_parses_per_second": 863883.8663640769,
+      "relative_range_percent": 33.32596152434037,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 30042,
+          "ns_per_parse": 1094.705,
+          "parses_per_second": 913487.959
+        },
+        {
+          "round": 1,
+          "iterations": 30042,
+          "ns_per_parse": 1196.132,
+          "parses_per_second": 836028.26
+        },
+        {
+          "round": 2,
+          "iterations": 30042,
+          "ns_per_parse": 1392.111,
+          "parses_per_second": 718333.569
+        },
+        {
+          "round": 3,
+          "iterations": 30042,
+          "ns_per_parse": 1006.342,
+          "parses_per_second": 993698.012
+        },
+        {
+          "round": 4,
+          "iterations": 30042,
+          "ns_per_parse": 1157.563,
+          "parses_per_second": 863883.783
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 16,
+      "parser": "clap",
+      "min_ns": 21477.38,
+      "median_ns": 22647.691,
+      "max_ns": 26849.14,
+      "median_parses_per_second": 44154.61161140003,
+      "relative_range_percent": 23.718797646965417,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 1346,
+          "ns_per_parse": 23849.972,
+          "parses_per_second": 41928.771
+        },
+        {
+          "round": 1,
+          "iterations": 1346,
+          "ns_per_parse": 21477.38,
+          "parses_per_second": 46560.613
+        },
+        {
+          "round": 2,
+          "iterations": 1346,
+          "ns_per_parse": 22647.691,
+          "parses_per_second": 44154.612
+        },
+        {
+          "round": 3,
+          "iterations": 1346,
+          "ns_per_parse": 26849.14,
+          "parses_per_second": 37245.14
+        },
+        {
+          "round": 4,
+          "iterations": 1346,
+          "ns_per_parse": 21718.751,
+          "parses_per_second": 46043.163
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 16,
+      "parser": "lexopt",
+      "min_ns": 899.262,
+      "median_ns": 1252.552,
+      "max_ns": 1567.962,
+      "median_parses_per_second": 798370.0477105941,
+      "relative_range_percent": 53.387005090407435,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 19437,
+          "ns_per_parse": 1497.26,
+          "parses_per_second": 667886.641
+        },
+        {
+          "round": 1,
+          "iterations": 19437,
+          "ns_per_parse": 1567.962,
+          "parses_per_second": 637770.483
+        },
+        {
+          "round": 2,
+          "iterations": 19437,
+          "ns_per_parse": 1252.552,
+          "parses_per_second": 798369.924
+        },
+        {
+          "round": 3,
+          "iterations": 19437,
+          "ns_per_parse": 899.262,
+          "parses_per_second": 1112023.256
+        },
+        {
+          "round": 4,
+          "iterations": 19437,
+          "ns_per_parse": 1050.459,
+          "parses_per_second": 951964.462
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 16,
+      "parser": "pico-args",
+      "min_ns": 1015.169,
+      "median_ns": 1467.479,
+      "max_ns": 1973.347,
+      "median_parses_per_second": 681440.7565627856,
+      "relative_range_percent": 65.29415412418167,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 19901,
+          "ns_per_parse": 1467.479,
+          "parses_per_second": 681440.677
+        },
+        {
+          "round": 1,
+          "iterations": 19901,
+          "ns_per_parse": 1585.891,
+          "parses_per_second": 630560.336
+        },
+        {
+          "round": 2,
+          "iterations": 19901,
+          "ns_per_parse": 1015.169,
+          "parses_per_second": 985057.625
+        },
+        {
+          "round": 3,
+          "iterations": 19901,
+          "ns_per_parse": 1973.347,
+          "parses_per_second": 506753.126
+        },
+        {
+          "round": 4,
+          "iterations": 19901,
+          "ns_per_parse": 1016.116,
+          "parses_per_second": 984139.437
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 16,
+      "parser": "clap_lex",
+      "min_ns": 1042.814,
+      "median_ns": 1464.497,
+      "max_ns": 1782.837,
+      "median_parses_per_second": 682828.3021405984,
+      "relative_range_percent": 50.530864863499204,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 17403,
+          "ns_per_parse": 1782.837,
+          "parses_per_second": 560903.706
+        },
+        {
+          "round": 1,
+          "iterations": 17403,
+          "ns_per_parse": 1666.81,
+          "parses_per_second": 599948.496
+        },
+        {
+          "round": 2,
+          "iterations": 17403,
+          "ns_per_parse": 1042.814,
+          "parses_per_second": 958943.519
+        },
+        {
+          "round": 3,
+          "iterations": 17403,
+          "ns_per_parse": 1464.497,
+          "parses_per_second": 682828.176
+        },
+        {
+          "round": 4,
+          "iterations": 17403,
+          "ns_per_parse": 1378.679,
+          "parses_per_second": 725332.113
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 32,
+      "parser": "zclap",
+      "min_ns": 307.598,
+      "median_ns": 390.327,
+      "max_ns": 457.266,
+      "median_parses_per_second": 2561954.46382136,
+      "relative_range_percent": 38.34426006912153,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 71331,
+          "ns_per_parse": 457.266,
+          "parses_per_second": 2186912.848
+        },
+        {
+          "round": 1,
+          "iterations": 71331,
+          "ns_per_parse": 307.598,
+          "parses_per_second": 3250993.458
+        },
+        {
+          "round": 2,
+          "iterations": 71331,
+          "ns_per_parse": 390.327,
+          "parses_per_second": 2561952.553
+        },
+        {
+          "round": 3,
+          "iterations": 71331,
+          "ns_per_parse": 319.935,
+          "parses_per_second": 3125638.248
+        },
+        {
+          "round": 4,
+          "iterations": 71331,
+          "ns_per_parse": 438.185,
+          "parses_per_second": 2282138.785
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 32,
+      "parser": "clap",
+      "min_ns": 11965.237,
+      "median_ns": 16919.275,
+      "max_ns": 18035.468,
+      "median_parses_per_second": 59104.187383915676,
+      "relative_range_percent": 35.87760704876539,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 1938,
+          "ns_per_parse": 16919.275,
+          "parses_per_second": 59104.189
+        },
+        {
+          "round": 1,
+          "iterations": 1938,
+          "ns_per_parse": 17590.53,
+          "parses_per_second": 56848.769
+        },
+        {
+          "round": 2,
+          "iterations": 1938,
+          "ns_per_parse": 18035.468,
+          "parses_per_second": 55446.302
+        },
+        {
+          "round": 3,
+          "iterations": 1938,
+          "ns_per_parse": 11965.237,
+          "parses_per_second": 83575.446
+        },
+        {
+          "round": 4,
+          "iterations": 1938,
+          "ns_per_parse": 14607.739,
+          "parses_per_second": 68456.862
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 32,
+      "parser": "lexopt",
+      "min_ns": 240.657,
+      "median_ns": 298.873,
+      "max_ns": 635.81,
+      "median_parses_per_second": 3345902.774757171,
+      "relative_range_percent": 132.21435191536202,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 108535,
+          "ns_per_parse": 298.873,
+          "parses_per_second": 3345902.574
+        },
+        {
+          "round": 1,
+          "iterations": 108535,
+          "ns_per_parse": 265.523,
+          "parses_per_second": 3766151.275
+        },
+        {
+          "round": 2,
+          "iterations": 108535,
+          "ns_per_parse": 240.657,
+          "parses_per_second": 4155284.158
+        },
+        {
+          "round": 3,
+          "iterations": 108535,
+          "ns_per_parse": 331.028,
+          "parses_per_second": 3020888.371
+        },
+        {
+          "round": 4,
+          "iterations": 108535,
+          "ns_per_parse": 635.81,
+          "parses_per_second": 1572796.616
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 32,
+      "parser": "pico-args",
+      "min_ns": 1016.917,
+      "median_ns": 1330.821,
+      "max_ns": 1742.237,
+      "median_parses_per_second": 751415.8553253969,
+      "relative_range_percent": 54.5016948184617,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 13935,
+          "ns_per_parse": 1017.38,
+          "parses_per_second": 982916.717
+        },
+        {
+          "round": 1,
+          "iterations": 13935,
+          "ns_per_parse": 1452.958,
+          "parses_per_second": 688251.097
+        },
+        {
+          "round": 2,
+          "iterations": 13935,
+          "ns_per_parse": 1016.917,
+          "parses_per_second": 983364.243
+        },
+        {
+          "round": 3,
+          "iterations": 13935,
+          "ns_per_parse": 1742.237,
+          "parses_per_second": 573974.643
+        },
+        {
+          "round": 4,
+          "iterations": 13935,
+          "ns_per_parse": 1330.821,
+          "parses_per_second": 751415.719
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 32,
+      "parser": "clap_lex",
+      "min_ns": 269.216,
+      "median_ns": 404.792,
+      "max_ns": 555.102,
+      "median_parses_per_second": 2470404.553449673,
+      "relative_range_percent": 70.62540761675132,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 120454,
+          "ns_per_parse": 431.19,
+          "parses_per_second": 2319160.623
+        },
+        {
+          "round": 1,
+          "iterations": 120454,
+          "ns_per_parse": 404.792,
+          "parses_per_second": 2470406.254
+        },
+        {
+          "round": 2,
+          "iterations": 120454,
+          "ns_per_parse": 555.102,
+          "parses_per_second": 1801471.78
+        },
+        {
+          "round": 3,
+          "iterations": 120454,
+          "ns_per_parse": 331.27,
+          "parses_per_second": 3018686.692
+        },
+        {
+          "round": 4,
+          "iterations": 120454,
+          "ns_per_parse": 269.216,
+          "parses_per_second": 3714493.268
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 32,
+      "parser": "zclap",
+      "min_ns": 4234.995,
+      "median_ns": 5314.731,
+      "max_ns": 14056.983,
+      "median_parses_per_second": 188156.2773355792,
+      "relative_range_percent": 184.8068698114731,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 8674,
+          "ns_per_parse": 4234.995,
+          "parses_per_second": 236127.785
+        },
+        {
+          "round": 1,
+          "iterations": 8674,
+          "ns_per_parse": 4291.984,
+          "parses_per_second": 232992.476
+        },
+        {
+          "round": 2,
+          "iterations": 8674,
+          "ns_per_parse": 14056.983,
+          "parses_per_second": 71139.02
+        },
+        {
+          "round": 3,
+          "iterations": 8674,
+          "ns_per_parse": 9675.826,
+          "parses_per_second": 103350.353
+        },
+        {
+          "round": 4,
+          "iterations": 8674,
+          "ns_per_parse": 5314.731,
+          "parses_per_second": 188156.272
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 32,
+      "parser": "clap",
+      "min_ns": 93155.083,
+      "median_ns": 180599.053,
+      "max_ns": 300063.716,
+      "median_parses_per_second": 5537.127595015683,
+      "relative_range_percent": 114.56795014312729,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 398,
+          "ns_per_parse": 93155.083,
+          "parses_per_second": 10734.787
+        },
+        {
+          "round": 1,
+          "iterations": 398,
+          "ns_per_parse": 180599.053,
+          "parses_per_second": 5537.128
+        },
+        {
+          "round": 2,
+          "iterations": 398,
+          "ns_per_parse": 260684.58,
+          "parses_per_second": 3836.054
+        },
+        {
+          "round": 3,
+          "iterations": 398,
+          "ns_per_parse": 300063.716,
+          "parses_per_second": 3332.626
+        },
+        {
+          "round": 4,
+          "iterations": 398,
+          "ns_per_parse": 97946.802,
+          "parses_per_second": 10209.624
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 32,
+      "parser": "lexopt",
+      "min_ns": 1763.743,
+      "median_ns": 3065.019,
+      "max_ns": 5092.091,
+      "median_parses_per_second": 326262.2515553737,
+      "relative_range_percent": 108.59143124398251,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 8745,
+          "ns_per_parse": 1763.743,
+          "parses_per_second": 566976.047
+        },
+        {
+          "round": 1,
+          "iterations": 8745,
+          "ns_per_parse": 5092.091,
+          "parses_per_second": 196382.965
+        },
+        {
+          "round": 2,
+          "iterations": 8745,
+          "ns_per_parse": 3752.942,
+          "parses_per_second": 266457.596
+        },
+        {
+          "round": 3,
+          "iterations": 8745,
+          "ns_per_parse": 3065.019,
+          "parses_per_second": 326262.29
+        },
+        {
+          "round": 4,
+          "iterations": 8745,
+          "ns_per_parse": 2857.797,
+          "parses_per_second": 349919.911
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 32,
+      "parser": "pico-args",
+      "min_ns": 2870.936,
+      "median_ns": 5639.859,
+      "max_ns": 15722.493,
+      "median_parses_per_second": 177309.39727393893,
+      "relative_range_percent": 227.8701825701671,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 4095,
+          "ns_per_parse": 2870.936,
+          "parses_per_second": 348318.426
+        },
+        {
+          "round": 1,
+          "iterations": 4095,
+          "ns_per_parse": 5583.973,
+          "parses_per_second": 179083.964
+        },
+        {
+          "round": 2,
+          "iterations": 4095,
+          "ns_per_parse": 15722.493,
+          "parses_per_second": 63603.146
+        },
+        {
+          "round": 3,
+          "iterations": 4095,
+          "ns_per_parse": 5639.859,
+          "parses_per_second": 177309.387
+        },
+        {
+          "round": 4,
+          "iterations": 4095,
+          "ns_per_parse": 13659.74,
+          "parses_per_second": 73207.836
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 32,
+      "parser": "clap_lex",
+      "min_ns": 3358.245,
+      "median_ns": 5741.726,
+      "max_ns": 8694.308,
+      "median_parses_per_second": 174163.6574089394,
+      "relative_range_percent": 92.93482482445177,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 10032,
+          "ns_per_parse": 5955.206,
+          "parses_per_second": 167920.297
+        },
+        {
+          "round": 1,
+          "iterations": 10032,
+          "ns_per_parse": 3358.245,
+          "parses_per_second": 297774.58
+        },
+        {
+          "round": 2,
+          "iterations": 10032,
+          "ns_per_parse": 8694.308,
+          "parses_per_second": 115017.786
+        },
+        {
+          "round": 3,
+          "iterations": 10032,
+          "ns_per_parse": 3632.636,
+          "parses_per_second": 275282.225
+        },
+        {
+          "round": 4,
+          "iterations": 10032,
+          "ns_per_parse": 5741.726,
+          "parses_per_second": 174163.655
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 64,
+      "parser": "zclap",
+      "min_ns": 604.015,
+      "median_ns": 802.058,
+      "max_ns": 1699.304,
+      "median_parses_per_second": 1246792.625969693,
+      "relative_range_percent": 136.55982485057194,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 37858,
+          "ns_per_parse": 911.002,
+          "parses_per_second": 1097692.804
+        },
+        {
+          "round": 1,
+          "iterations": 37858,
+          "ns_per_parse": 1699.304,
+          "parses_per_second": 588476.185
+        },
+        {
+          "round": 2,
+          "iterations": 37858,
+          "ns_per_parse": 741.782,
+          "parses_per_second": 1348104.919
+        },
+        {
+          "round": 3,
+          "iterations": 37858,
+          "ns_per_parse": 802.058,
+          "parses_per_second": 1246792.781
+        },
+        {
+          "round": 4,
+          "iterations": 37858,
+          "ns_per_parse": 604.015,
+          "parses_per_second": 1655589.172
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 64,
+      "parser": "clap",
+      "min_ns": 34151.606,
+      "median_ns": 56142.251,
+      "max_ns": 237792.922,
+      "median_parses_per_second": 17811.897139642657,
+      "relative_range_percent": 362.7238173973466,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 526,
+          "ns_per_parse": 36191.327,
+          "parses_per_second": 27630.929
+        },
+        {
+          "round": 1,
+          "iterations": 526,
+          "ns_per_parse": 56142.251,
+          "parses_per_second": 17811.897
+        },
+        {
+          "round": 2,
+          "iterations": 526,
+          "ns_per_parse": 64517.019,
+          "parses_per_second": 15499.786
+        },
+        {
+          "round": 3,
+          "iterations": 526,
+          "ns_per_parse": 237792.922,
+          "parses_per_second": 4205.34
+        },
+        {
+          "round": 4,
+          "iterations": 526,
+          "ns_per_parse": 34151.606,
+          "parses_per_second": 29281.199
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 64,
+      "parser": "lexopt",
+      "min_ns": 215.726,
+      "median_ns": 374.545,
+      "max_ns": 521.692,
+      "median_parses_per_second": 2669906.152798729,
+      "relative_range_percent": 81.6900505947216,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 69844,
+          "ns_per_parse": 521.692,
+          "parses_per_second": 1916839.982
+        },
+        {
+          "round": 1,
+          "iterations": 69844,
+          "ns_per_parse": 374.545,
+          "parses_per_second": 2669909.621
+        },
+        {
+          "round": 2,
+          "iterations": 69844,
+          "ns_per_parse": 247.196,
+          "parses_per_second": 4045379.562
+        },
+        {
+          "round": 3,
+          "iterations": 69844,
+          "ns_per_parse": 215.726,
+          "parses_per_second": 4635502.705
+        },
+        {
+          "round": 4,
+          "iterations": 69844,
+          "ns_per_parse": 457.49,
+          "parses_per_second": 2185841.876
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 64,
+      "parser": "pico-args",
+      "min_ns": 2173.572,
+      "median_ns": 2671.87,
+      "max_ns": 2912.851,
+      "median_parses_per_second": 374269.70623570756,
+      "relative_range_percent": 27.668973415622766,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 9513,
+          "ns_per_parse": 2772.341,
+          "parses_per_second": 360705.987
+        },
+        {
+          "round": 1,
+          "iterations": 9513,
+          "ns_per_parse": 2912.851,
+          "parses_per_second": 343306.236
+        },
+        {
+          "round": 2,
+          "iterations": 9513,
+          "ns_per_parse": 2173.572,
+          "parses_per_second": 460072.097
+        },
+        {
+          "round": 3,
+          "iterations": 9513,
+          "ns_per_parse": 2671.87,
+          "parses_per_second": 374269.696
+        },
+        {
+          "round": 4,
+          "iterations": 9513,
+          "ns_per_parse": 2319.114,
+          "parses_per_second": 431199.146
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 64,
+      "parser": "clap_lex",
+      "min_ns": 381.371,
+      "median_ns": 433.014,
+      "max_ns": 572.362,
+      "median_parses_per_second": 2309394.153537761,
+      "relative_range_percent": 44.107349877833045,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 90836,
+          "ns_per_parse": 381.371,
+          "parses_per_second": 2622118.026
+        },
+        {
+          "round": 1,
+          "iterations": 90836,
+          "ns_per_parse": 572.362,
+          "parses_per_second": 1747145.991
+        },
+        {
+          "round": 2,
+          "iterations": 90836,
+          "ns_per_parse": 383.326,
+          "parses_per_second": 2608742.677
+        },
+        {
+          "round": 3,
+          "iterations": 90836,
+          "ns_per_parse": 451.653,
+          "parses_per_second": 2214089.4
+        },
+        {
+          "round": 4,
+          "iterations": 90836,
+          "ns_per_parse": 433.014,
+          "parses_per_second": 2309396.015
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 64,
+      "parser": "zclap",
+      "min_ns": 8195.225,
+      "median_ns": 9793.813,
+      "max_ns": 11872.55,
+      "median_parses_per_second": 102105.27809750912,
+      "relative_range_percent": 37.54742917799226,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 1298,
+          "ns_per_parse": 8195.225,
+          "parses_per_second": 122022.276
+        },
+        {
+          "round": 1,
+          "iterations": 1298,
+          "ns_per_parse": 9793.813,
+          "parses_per_second": 102105.28
+        },
+        {
+          "round": 2,
+          "iterations": 1298,
+          "ns_per_parse": 11872.55,
+          "parses_per_second": 84227.903
+        },
+        {
+          "round": 3,
+          "iterations": 1298,
+          "ns_per_parse": 9508.234,
+          "parses_per_second": 105171.999
+        },
+        {
+          "round": 4,
+          "iterations": 1298,
+          "ns_per_parse": 11232.366,
+          "parses_per_second": 89028.438
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 64,
+      "parser": "clap",
+      "min_ns": 309348.0,
+      "median_ns": 641903.571,
+      "max_ns": 1757871.857,
+      "median_parses_per_second": 1557.8663917418837,
+      "relative_range_percent": 225.66066344566264,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 7,
+          "ns_per_parse": 309348.0,
+          "parses_per_second": 3232.605
+        },
+        {
+          "round": 1,
+          "iterations": 7,
+          "ns_per_parse": 641903.571,
+          "parses_per_second": 1557.866
+        },
+        {
+          "round": 2,
+          "iterations": 7,
+          "ns_per_parse": 1757871.857,
+          "parses_per_second": 568.87
+        },
+        {
+          "round": 3,
+          "iterations": 7,
+          "ns_per_parse": 372022.857,
+          "parses_per_second": 2688.007
+        },
+        {
+          "round": 4,
+          "iterations": 7,
+          "ns_per_parse": 921444.143,
+          "parses_per_second": 1085.253
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 64,
+      "parser": "lexopt",
+      "min_ns": 5815.936,
+      "median_ns": 8975.659,
+      "max_ns": 16549.995,
+      "median_parses_per_second": 111412.43222363952,
+      "relative_range_percent": 119.59076208220476,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 5541,
+          "ns_per_parse": 7853.926,
+          "parses_per_second": 127324.856
+        },
+        {
+          "round": 1,
+          "iterations": 5541,
+          "ns_per_parse": 16549.995,
+          "parses_per_second": 60422.98
+        },
+        {
+          "round": 2,
+          "iterations": 5541,
+          "ns_per_parse": 5815.936,
+          "parses_per_second": 171941.355
+        },
+        {
+          "round": 3,
+          "iterations": 5541,
+          "ns_per_parse": 8975.659,
+          "parses_per_second": 111412.433
+        },
+        {
+          "round": 4,
+          "iterations": 5541,
+          "ns_per_parse": 9402.197,
+          "parses_per_second": 106358.126
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 64,
+      "parser": "pico-args",
+      "min_ns": 11555.656,
+      "median_ns": 13899.379,
+      "max_ns": 75487.726,
+      "median_parses_per_second": 71945.6603061187,
+      "relative_range_percent": 459.9634990887002,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 636,
+          "ns_per_parse": 13385.525,
+          "parses_per_second": 74707.566
+        },
+        {
+          "round": 1,
+          "iterations": 636,
+          "ns_per_parse": 75487.726,
+          "parses_per_second": 13247.187
+        },
+        {
+          "round": 2,
+          "iterations": 636,
+          "ns_per_parse": 14921.212,
+          "parses_per_second": 67018.683
+        },
+        {
+          "round": 3,
+          "iterations": 636,
+          "ns_per_parse": 13899.379,
+          "parses_per_second": 71945.661
+        },
+        {
+          "round": 4,
+          "iterations": 636,
+          "ns_per_parse": 11555.656,
+          "parses_per_second": 86537.712
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 64,
+      "parser": "clap_lex",
+      "min_ns": 6387.224,
+      "median_ns": 9823.588,
+      "max_ns": 11907.678,
+      "median_parses_per_second": 101795.80006816247,
+      "relative_range_percent": 56.19590316694878,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 5959,
+          "ns_per_parse": 11907.678,
+          "parses_per_second": 83979.426
+        },
+        {
+          "round": 1,
+          "iterations": 5959,
+          "ns_per_parse": 11043.066,
+          "parses_per_second": 90554.565
+        },
+        {
+          "round": 2,
+          "iterations": 5959,
+          "ns_per_parse": 6387.224,
+          "parses_per_second": 156562.55
+        },
+        {
+          "round": 3,
+          "iterations": 5959,
+          "ns_per_parse": 6538.649,
+          "parses_per_second": 152936.793
+        },
+        {
+          "round": 4,
+          "iterations": 5959,
+          "ns_per_parse": 9823.588,
+          "parses_per_second": 101795.8
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 128,
+      "parser": "zclap",
+      "min_ns": 1268.216,
+      "median_ns": 1468.519,
+      "max_ns": 1829.937,
+      "median_parses_per_second": 680958.1626114473,
+      "relative_range_percent": 38.25085000602648,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 25164,
+          "ns_per_parse": 1399.071,
+          "parses_per_second": 714760.164
+        },
+        {
+          "round": 1,
+          "iterations": 25164,
+          "ns_per_parse": 1268.216,
+          "parses_per_second": 788508.902
+        },
+        {
+          "round": 2,
+          "iterations": 25164,
+          "ns_per_parse": 1468.519,
+          "parses_per_second": 680958.238
+        },
+        {
+          "round": 3,
+          "iterations": 25164,
+          "ns_per_parse": 1660.531,
+          "parses_per_second": 602217.133
+        },
+        {
+          "round": 4,
+          "iterations": 25164,
+          "ns_per_parse": 1829.937,
+          "parses_per_second": 546466.778
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 128,
+      "parser": "clap",
+      "min_ns": 93375.01,
+      "median_ns": 104653.149,
+      "max_ns": 166487.528,
+      "median_parses_per_second": 9555.37420092347,
+      "relative_range_percent": 69.86174682617529,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 288,
+          "ns_per_parse": 93375.01,
+          "parses_per_second": 10709.503
+        },
+        {
+          "round": 1,
+          "iterations": 288,
+          "ns_per_parse": 96504.514,
+          "parses_per_second": 10362.21
+        },
+        {
+          "round": 2,
+          "iterations": 288,
+          "ns_per_parse": 104653.149,
+          "parses_per_second": 9555.374
+        },
+        {
+          "round": 3,
+          "iterations": 288,
+          "ns_per_parse": 166487.528,
+          "parses_per_second": 6006.456
+        },
+        {
+          "round": 4,
+          "iterations": 288,
+          "ns_per_parse": 135792.177,
+          "parses_per_second": 7364.194
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 128,
+      "parser": "lexopt",
+      "min_ns": 259.976,
+      "median_ns": 347.119,
+      "max_ns": 426.23,
+      "median_parses_per_second": 2880856.4209968336,
+      "relative_range_percent": 47.89539034164076,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 67598,
+          "ns_per_parse": 347.119,
+          "parses_per_second": 2880856.073
+        },
+        {
+          "round": 1,
+          "iterations": 67598,
+          "ns_per_parse": 363.298,
+          "parses_per_second": 2752561.617
+        },
+        {
+          "round": 2,
+          "iterations": 67598,
+          "ns_per_parse": 276.929,
+          "parses_per_second": 3611027.807
+        },
+        {
+          "round": 3,
+          "iterations": 67598,
+          "ns_per_parse": 426.23,
+          "parses_per_second": 2346151.102
+        },
+        {
+          "round": 4,
+          "iterations": 67598,
+          "ns_per_parse": 259.976,
+          "parses_per_second": 3846511.02
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 128,
+      "parser": "pico-args",
+      "min_ns": 3747.102,
+      "median_ns": 4218.013,
+      "max_ns": 8704.981,
+      "median_parses_per_second": 237078.45376484143,
+      "relative_range_percent": 117.54062872731781,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 7647,
+          "ns_per_parse": 3747.102,
+          "parses_per_second": 266872.897
+        },
+        {
+          "round": 1,
+          "iterations": 7647,
+          "ns_per_parse": 8704.981,
+          "parses_per_second": 114876.765
+        },
+        {
+          "round": 2,
+          "iterations": 7647,
+          "ns_per_parse": 4218.013,
+          "parses_per_second": 237078.442
+        },
+        {
+          "round": 3,
+          "iterations": 7647,
+          "ns_per_parse": 3938.675,
+          "parses_per_second": 253892.504
+        },
+        {
+          "round": 4,
+          "iterations": 7647,
+          "ns_per_parse": 6208.232,
+          "parses_per_second": 161076.445
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 128,
+      "parser": "clap_lex",
+      "min_ns": 281.363,
+      "median_ns": 336.026,
+      "max_ns": 418.687,
+      "median_parses_per_second": 2975960.193556451,
+      "relative_range_percent": 40.867075761994606,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 58747,
+          "ns_per_parse": 294.208,
+          "parses_per_second": 3398951.785
+        },
+        {
+          "round": 1,
+          "iterations": 58747,
+          "ns_per_parse": 281.363,
+          "parses_per_second": 3554133.426
+        },
+        {
+          "round": 2,
+          "iterations": 58747,
+          "ns_per_parse": 336.026,
+          "parses_per_second": 2975961.614
+        },
+        {
+          "round": 3,
+          "iterations": 58747,
+          "ns_per_parse": 407.254,
+          "parses_per_second": 2455472.795
+        },
+        {
+          "round": 4,
+          "iterations": 58747,
+          "ns_per_parse": 418.687,
+          "parses_per_second": 2388418.275
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 128,
+      "parser": "zclap",
+      "min_ns": 32758.132,
+      "median_ns": 63459.055,
+      "max_ns": 123539.117,
+      "median_parses_per_second": 15758.19242817278,
+      "relative_range_percent": 143.05442304490668,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 899,
+          "ns_per_parse": 95223.571,
+          "parses_per_second": 10501.602
+        },
+        {
+          "round": 1,
+          "iterations": 899,
+          "ns_per_parse": 60123.834,
+          "parses_per_second": 16632.339
+        },
+        {
+          "round": 2,
+          "iterations": 899,
+          "ns_per_parse": 123539.117,
+          "parses_per_second": 8094.602
+        },
+        {
+          "round": 3,
+          "iterations": 899,
+          "ns_per_parse": 32758.132,
+          "parses_per_second": 30526.771
+        },
+        {
+          "round": 4,
+          "iterations": 899,
+          "ns_per_parse": 63459.055,
+          "parses_per_second": 15758.193
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 128,
+      "parser": "clap",
+      "min_ns": 1682202.8,
+      "median_ns": 2519662.4,
+      "max_ns": 9461223.2,
+      "median_parses_per_second": 396.8785659539151,
+      "relative_range_percent": 308.73264608782506,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 5,
+          "ns_per_parse": 2519662.4,
+          "parses_per_second": 396.879
+        },
+        {
+          "round": 1,
+          "iterations": 5,
+          "ns_per_parse": 1682202.8,
+          "parses_per_second": 594.459
+        },
+        {
+          "round": 2,
+          "iterations": 5,
+          "ns_per_parse": 1842834.2,
+          "parses_per_second": 542.642
+        },
+        {
+          "round": 3,
+          "iterations": 5,
+          "ns_per_parse": 2740507.2,
+          "parses_per_second": 364.896
+        },
+        {
+          "round": 4,
+          "iterations": 5,
+          "ns_per_parse": 9461223.2,
+          "parses_per_second": 105.695
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 128,
+      "parser": "lexopt",
+      "min_ns": 16614.603,
+      "median_ns": 20251.387,
+      "max_ns": 130198.959,
+      "median_parses_per_second": 49379.33386982334,
+      "relative_range_percent": 560.8719837312872,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 688,
+          "ns_per_parse": 19461.581,
+          "parses_per_second": 51383.286
+        },
+        {
+          "round": 1,
+          "iterations": 688,
+          "ns_per_parse": 16614.603,
+          "parses_per_second": 60188.016
+        },
+        {
+          "round": 2,
+          "iterations": 688,
+          "ns_per_parse": 43519.438,
+          "parses_per_second": 22978.238
+        },
+        {
+          "round": 3,
+          "iterations": 688,
+          "ns_per_parse": 130198.959,
+          "parses_per_second": 7680.553
+        },
+        {
+          "round": 4,
+          "iterations": 688,
+          "ns_per_parse": 20251.387,
+          "parses_per_second": 49379.335
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 128,
+      "parser": "pico-args",
+      "min_ns": 38366.636,
+      "median_ns": 46827.256,
+      "max_ns": 105138.182,
+      "median_parses_per_second": 21355.084312435476,
+      "relative_range_percent": 142.59119945016639,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 313,
+          "ns_per_parse": 46656.812,
+          "parses_per_second": 21433.098
+        },
+        {
+          "round": 1,
+          "iterations": 313,
+          "ns_per_parse": 38366.636,
+          "parses_per_second": 26064.313
+        },
+        {
+          "round": 2,
+          "iterations": 313,
+          "ns_per_parse": 105138.182,
+          "parses_per_second": 9511.292
+        },
+        {
+          "round": 3,
+          "iterations": 313,
+          "ns_per_parse": 46827.256,
+          "parses_per_second": 21355.084
+        },
+        {
+          "round": 4,
+          "iterations": 313,
+          "ns_per_parse": 84663.789,
+          "parses_per_second": 11811.425
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 128,
+      "parser": "clap_lex",
+      "min_ns": 10404.58,
+      "median_ns": 16100.679,
+      "max_ns": 248557.409,
+      "median_parses_per_second": 62109.18185500127,
+      "relative_range_percent": 1479.1477365644023,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 1325,
+          "ns_per_parse": 16100.679,
+          "parses_per_second": 62109.181
+        },
+        {
+          "round": 1,
+          "iterations": 1325,
+          "ns_per_parse": 10404.58,
+          "parses_per_second": 96111.517
+        },
+        {
+          "round": 2,
+          "iterations": 1325,
+          "ns_per_parse": 49216.341,
+          "parses_per_second": 20318.455
+        },
+        {
+          "round": 3,
+          "iterations": 1325,
+          "ns_per_parse": 14889.274,
+          "parses_per_second": 67162.442
+        },
+        {
+          "round": 4,
+          "iterations": 1325,
+          "ns_per_parse": 248557.409,
+          "parses_per_second": 4023.215
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 256,
+      "parser": "zclap",
+      "min_ns": 2126.351,
+      "median_ns": 3040.616,
+      "max_ns": 8161.297,
+      "median_parses_per_second": 328880.72680009576,
+      "relative_range_percent": 198.4777426679331,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 16404,
+          "ns_per_parse": 2885.433,
+          "parses_per_second": 346568.376
+        },
+        {
+          "round": 1,
+          "iterations": 16404,
+          "ns_per_parse": 8161.297,
+          "parses_per_second": 122529.541
+        },
+        {
+          "round": 2,
+          "iterations": 16404,
+          "ns_per_parse": 3040.616,
+          "parses_per_second": 328880.759
+        },
+        {
+          "round": 3,
+          "iterations": 16404,
+          "ns_per_parse": 5179.671,
+          "parses_per_second": 193062.462
+        },
+        {
+          "round": 4,
+          "iterations": 16404,
+          "ns_per_parse": 2126.351,
+          "parses_per_second": 470289.212
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 256,
+      "parser": "clap",
+      "min_ns": 285206.757,
+      "median_ns": 527945.822,
+      "max_ns": 2211058.187,
+      "median_parses_per_second": 1894.133750716565,
+      "relative_range_percent": 364.782019242876,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 107,
+          "ns_per_parse": 2211058.187,
+          "parses_per_second": 452.272
+        },
+        {
+          "round": 1,
+          "iterations": 107,
+          "ns_per_parse": 527945.822,
+          "parses_per_second": 1894.134
+        },
+        {
+          "round": 2,
+          "iterations": 107,
+          "ns_per_parse": 383895.654,
+          "parses_per_second": 2604.874
+        },
+        {
+          "round": 3,
+          "iterations": 107,
+          "ns_per_parse": 741509.57,
+          "parses_per_second": 1348.6
+        },
+        {
+          "round": 4,
+          "iterations": 107,
+          "ns_per_parse": 285206.757,
+          "parses_per_second": 3506.228
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 256,
+      "parser": "lexopt",
+      "min_ns": 339.956,
+      "median_ns": 776.775,
+      "max_ns": 1181.905,
+      "median_parses_per_second": 1287374.078722925,
+      "relative_range_percent": 108.39033182066879,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 121313,
+          "ns_per_parse": 1114.569,
+          "parses_per_second": 897208.152
+        },
+        {
+          "round": 1,
+          "iterations": 121313,
+          "ns_per_parse": 1181.905,
+          "parses_per_second": 846091.344
+        },
+        {
+          "round": 2,
+          "iterations": 121313,
+          "ns_per_parse": 776.775,
+          "parses_per_second": 1287374.005
+        },
+        {
+          "round": 3,
+          "iterations": 121313,
+          "ns_per_parse": 339.956,
+          "parses_per_second": 2941556.446
+        },
+        {
+          "round": 4,
+          "iterations": 121313,
+          "ns_per_parse": 630.71,
+          "parses_per_second": 1585515.675
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 256,
+      "parser": "pico-args",
+      "min_ns": 9159.308,
+      "median_ns": 9842.443,
+      "max_ns": 26251.049,
+      "median_parses_per_second": 101600.79159208747,
+      "relative_range_percent": 173.65344152869363,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 3795,
+          "ns_per_parse": 9159.308,
+          "parses_per_second": 109178.56
+        },
+        {
+          "round": 1,
+          "iterations": 3795,
+          "ns_per_parse": 9842.443,
+          "parses_per_second": 101600.789
+        },
+        {
+          "round": 2,
+          "iterations": 3795,
+          "ns_per_parse": 26251.049,
+          "parses_per_second": 38093.716
+        },
+        {
+          "round": 3,
+          "iterations": 3795,
+          "ns_per_parse": 9582.203,
+          "parses_per_second": 104360.133
+        },
+        {
+          "round": 4,
+          "iterations": 3795,
+          "ns_per_parse": 18170.383,
+          "parses_per_second": 55034.612
+        }
+      ]
+    },
+    {
+      "scenario": "sparse",
+      "options": 256,
+      "parser": "clap_lex",
+      "min_ns": 285.892,
+      "median_ns": 333.433,
+      "max_ns": 1613.038,
+      "median_parses_per_second": 2999103.2681228314,
+      "relative_range_percent": 398.0247905876143,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 91934,
+          "ns_per_parse": 285.892,
+          "parses_per_second": 3497824.77
+        },
+        {
+          "round": 1,
+          "iterations": 91934,
+          "ns_per_parse": 332.979,
+          "parses_per_second": 3003191.352
+        },
+        {
+          "round": 2,
+          "iterations": 91934,
+          "ns_per_parse": 1613.038,
+          "parses_per_second": 619948.032
+        },
+        {
+          "round": 3,
+          "iterations": 91934,
+          "ns_per_parse": 333.433,
+          "parses_per_second": 2999103.505
+        },
+        {
+          "round": 4,
+          "iterations": 91934,
+          "ns_per_parse": 897.382,
+          "parses_per_second": 1114352.771
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 256,
+      "parser": "zclap",
+      "min_ns": 96961.362,
+      "median_ns": 127307.245,
+      "max_ns": 229455.83,
+      "median_parses_per_second": 7855.0124935937465,
+      "relative_range_percent": 104.07457014720569,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 229,
+          "ns_per_parse": 108840.541,
+          "parses_per_second": 9187.753
+        },
+        {
+          "round": 1,
+          "iterations": 229,
+          "ns_per_parse": 229455.83,
+          "parses_per_second": 4358.137
+        },
+        {
+          "round": 2,
+          "iterations": 229,
+          "ns_per_parse": 96961.362,
+          "parses_per_second": 10313.386
+        },
+        {
+          "round": 3,
+          "iterations": 229,
+          "ns_per_parse": 152007.734,
+          "parses_per_second": 6578.613
+        },
+        {
+          "round": 4,
+          "iterations": 229,
+          "ns_per_parse": 127307.245,
+          "parses_per_second": 7855.013
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 256,
+      "parser": "clap",
+      "min_ns": 9867645.0,
+      "median_ns": 15603126.0,
+      "max_ns": 156321166.0,
+      "median_parses_per_second": 64.08972150836954,
+      "relative_range_percent": 938.6165374810151,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 1,
+          "ns_per_parse": 9867645.0,
+          "parses_per_second": 101.341
+        },
+        {
+          "round": 1,
+          "iterations": 1,
+          "ns_per_parse": 156321166.0,
+          "parses_per_second": 6.397
+        },
+        {
+          "round": 2,
+          "iterations": 1,
+          "ns_per_parse": 14299531.0,
+          "parses_per_second": 69.932
+        },
+        {
+          "round": 3,
+          "iterations": 1,
+          "ns_per_parse": 15604598.0,
+          "parses_per_second": 64.084
+        },
+        {
+          "round": 4,
+          "iterations": 1,
+          "ns_per_parse": 15603126.0,
+          "parses_per_second": 64.09
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 256,
+      "parser": "lexopt",
+      "min_ns": 21890.383,
+      "median_ns": 37978.997,
+      "max_ns": 65093.069,
+      "median_parses_per_second": 26330.34253116268,
+      "relative_range_percent": 113.75415206462667,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 1377,
+          "ns_per_parse": 37978.997,
+          "parses_per_second": 26330.342
+        },
+        {
+          "round": 1,
+          "iterations": 1377,
+          "ns_per_parse": 65093.069,
+          "parses_per_second": 15362.619
+        },
+        {
+          "round": 2,
+          "iterations": 1377,
+          "ns_per_parse": 21890.383,
+          "parses_per_second": 45682.16
+        },
+        {
+          "round": 3,
+          "iterations": 1377,
+          "ns_per_parse": 31348.791,
+          "parses_per_second": 31899.157
+        },
+        {
+          "round": 4,
+          "iterations": 1377,
+          "ns_per_parse": 43397.722,
+          "parses_per_second": 23042.684
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 256,
+      "parser": "pico-args",
+      "min_ns": 150608.493,
+      "median_ns": 192054.759,
+      "max_ns": 222076.096,
+      "median_parses_per_second": 5206.84832391995,
+      "relative_range_percent": 37.212096889512644,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 270,
+          "ns_per_parse": 192054.759,
+          "parses_per_second": 5206.848
+        },
+        {
+          "round": 1,
+          "iterations": 270,
+          "ns_per_parse": 150608.493,
+          "parses_per_second": 6639.732
+        },
+        {
+          "round": 2,
+          "iterations": 270,
+          "ns_per_parse": 167866.526,
+          "parses_per_second": 5957.114
+        },
+        {
+          "round": 3,
+          "iterations": 270,
+          "ns_per_parse": 217958.333,
+          "parses_per_second": 4588.033
+        },
+        {
+          "round": 4,
+          "iterations": 270,
+          "ns_per_parse": 222076.096,
+          "parses_per_second": 4502.961
+        }
+      ]
+    },
+    {
+      "scenario": "dense",
+      "options": 256,
+      "parser": "clap_lex",
+      "min_ns": 24320.529,
+      "median_ns": 32547.226,
+      "max_ns": 89548.457,
+      "median_parses_per_second": 30724.584638948956,
+      "relative_range_percent": 200.41009946592686,
+      "samples": [
+        {
+          "round": 0,
+          "iterations": 1258,
+          "ns_per_parse": 75976.019,
+          "parses_per_second": 13162.048
+        },
+        {
+          "round": 1,
+          "iterations": 1258,
+          "ns_per_parse": 89548.457,
+          "parses_per_second": 11167.138
+        },
+        {
+          "round": 2,
+          "iterations": 1258,
+          "ns_per_parse": 26277.23,
+          "parses_per_second": 38055.762
+        },
+        {
+          "round": 3,
+          "iterations": 1258,
+          "ns_per_parse": 32547.226,
+          "parses_per_second": 30724.585
+        },
+        {
+          "round": 4,
+          "iterations": 1258,
+          "ns_per_parse": 24320.529,
+          "parses_per_second": 41117.527
+        }
+      ]
+    }
+  ],
+  "allocations": [
+    {
+      "scenario": "sparse",
+      "options": "4",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "sparse",
+      "options": "4",
+      "parser": "clap",
+      "allocations": "51",
+      "allocated_bytes": "3481"
+    },
+    {
+      "scenario": "sparse",
+      "options": "4",
+      "parser": "lexopt",
+      "allocations": "7",
+      "allocated_bytes": "165"
+    },
+    {
+      "scenario": "sparse",
+      "options": "4",
+      "parser": "pico-args",
+      "allocations": "6",
+      "allocated_bytes": "161"
+    },
+    {
+      "scenario": "sparse",
+      "options": "4",
+      "parser": "clap_lex",
+      "allocations": "6",
+      "allocated_bytes": "161"
+    },
+    {
+      "scenario": "dense",
+      "options": "4",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "dense",
+      "options": "4",
+      "parser": "clap",
+      "allocations": "51",
+      "allocated_bytes": "3481"
+    },
+    {
+      "scenario": "dense",
+      "options": "4",
+      "parser": "lexopt",
+      "allocations": "7",
+      "allocated_bytes": "165"
+    },
+    {
+      "scenario": "dense",
+      "options": "4",
+      "parser": "pico-args",
+      "allocations": "6",
+      "allocated_bytes": "161"
+    },
+    {
+      "scenario": "dense",
+      "options": "4",
+      "parser": "clap_lex",
+      "allocations": "6",
+      "allocated_bytes": "161"
+    },
+    {
+      "scenario": "sparse",
+      "options": "8",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "sparse",
+      "options": "8",
+      "parser": "clap",
+      "allocations": "77",
+      "allocated_bytes": "5941"
+    },
+    {
+      "scenario": "sparse",
+      "options": "8",
+      "parser": "lexopt",
+      "allocations": "8",
+      "allocated_bytes": "174"
+    },
+    {
+      "scenario": "sparse",
+      "options": "8",
+      "parser": "pico-args",
+      "allocations": "6",
+      "allocated_bytes": "166"
+    },
+    {
+      "scenario": "sparse",
+      "options": "8",
+      "parser": "clap_lex",
+      "allocations": "6",
+      "allocated_bytes": "166"
+    },
+    {
+      "scenario": "dense",
+      "options": "8",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "dense",
+      "options": "8",
+      "parser": "clap",
+      "allocations": "100",
+      "allocated_bytes": "7426"
+    },
+    {
+      "scenario": "dense",
+      "options": "8",
+      "parser": "lexopt",
+      "allocations": "13",
+      "allocated_bytes": "330"
+    },
+    {
+      "scenario": "dense",
+      "options": "8",
+      "parser": "pico-args",
+      "allocations": "11",
+      "allocated_bytes": "322"
+    },
+    {
+      "scenario": "dense",
+      "options": "8",
+      "parser": "clap_lex",
+      "allocations": "11",
+      "allocated_bytes": "322"
+    },
+    {
+      "scenario": "sparse",
+      "options": "16",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "sparse",
+      "options": "16",
+      "parser": "clap",
+      "allocations": "102",
+      "allocated_bytes": "9464"
+    },
+    {
+      "scenario": "sparse",
+      "options": "16",
+      "parser": "lexopt",
+      "allocations": "7",
+      "allocated_bytes": "146"
+    },
+    {
+      "scenario": "sparse",
+      "options": "16",
+      "parser": "pico-args",
+      "allocations": "5",
+      "allocated_bytes": "138"
+    },
+    {
+      "scenario": "sparse",
+      "options": "16",
+      "parser": "clap_lex",
+      "allocations": "5",
+      "allocated_bytes": "138"
+    },
+    {
+      "scenario": "dense",
+      "options": "16",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "dense",
+      "options": "16",
+      "parser": "clap",
+      "allocations": "194",
+      "allocated_bytes": "15316"
+    },
+    {
+      "scenario": "dense",
+      "options": "16",
+      "parser": "lexopt",
+      "allocations": "25",
+      "allocated_bytes": "660"
+    },
+    {
+      "scenario": "dense",
+      "options": "16",
+      "parser": "pico-args",
+      "allocations": "21",
+      "allocated_bytes": "644"
+    },
+    {
+      "scenario": "dense",
+      "options": "16",
+      "parser": "clap_lex",
+      "allocations": "21",
+      "allocated_bytes": "644"
+    },
+    {
+      "scenario": "sparse",
+      "options": "32",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "sparse",
+      "options": "32",
+      "parser": "clap",
+      "allocations": "177",
+      "allocated_bytes": "18097"
+    },
+    {
+      "scenario": "sparse",
+      "options": "32",
+      "parser": "lexopt",
+      "allocations": "8",
+      "allocated_bytes": "174"
+    },
+    {
+      "scenario": "sparse",
+      "options": "32",
+      "parser": "pico-args",
+      "allocations": "6",
+      "allocated_bytes": "166"
+    },
+    {
+      "scenario": "sparse",
+      "options": "32",
+      "parser": "clap_lex",
+      "allocations": "6",
+      "allocated_bytes": "166"
+    },
+    {
+      "scenario": "dense",
+      "options": "32",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "dense",
+      "options": "32",
+      "parser": "clap",
+      "allocations": "378",
+      "allocated_bytes": "31096"
+    },
+    {
+      "scenario": "dense",
+      "options": "32",
+      "parser": "lexopt",
+      "allocations": "49",
+      "allocated_bytes": "1320"
+    },
+    {
+      "scenario": "dense",
+      "options": "32",
+      "parser": "pico-args",
+      "allocations": "41",
+      "allocated_bytes": "1288"
+    },
+    {
+      "scenario": "dense",
+      "options": "32",
+      "parser": "clap_lex",
+      "allocations": "41",
+      "allocated_bytes": "1288"
+    },
+    {
+      "scenario": "sparse",
+      "options": "64",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "sparse",
+      "options": "64",
+      "parser": "clap",
+      "allocations": "298",
+      "allocated_bytes": "33776"
+    },
+    {
+      "scenario": "sparse",
+      "options": "64",
+      "parser": "lexopt",
+      "allocations": "7",
+      "allocated_bytes": "146"
+    },
+    {
+      "scenario": "sparse",
+      "options": "64",
+      "parser": "pico-args",
+      "allocations": "5",
+      "allocated_bytes": "138"
+    },
+    {
+      "scenario": "sparse",
+      "options": "64",
+      "parser": "clap_lex",
+      "allocations": "5",
+      "allocated_bytes": "138"
+    },
+    {
+      "scenario": "dense",
+      "options": "64",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "dense",
+      "options": "64",
+      "parser": "clap",
+      "allocations": "742",
+      "allocated_bytes": "62656"
+    },
+    {
+      "scenario": "dense",
+      "options": "64",
+      "parser": "lexopt",
+      "allocations": "97",
+      "allocated_bytes": "2640"
+    },
+    {
+      "scenario": "dense",
+      "options": "64",
+      "parser": "pico-args",
+      "allocations": "81",
+      "allocated_bytes": "2576"
+    },
+    {
+      "scenario": "dense",
+      "options": "64",
+      "parser": "clap_lex",
+      "allocations": "81",
+      "allocated_bytes": "2576"
+    },
+    {
+      "scenario": "sparse",
+      "options": "128",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "sparse",
+      "options": "128",
+      "parser": "clap",
+      "allocations": "565",
+      "allocated_bytes": "66721"
+    },
+    {
+      "scenario": "sparse",
+      "options": "128",
+      "parser": "lexopt",
+      "allocations": "8",
+      "allocated_bytes": "174"
+    },
+    {
+      "scenario": "sparse",
+      "options": "128",
+      "parser": "pico-args",
+      "allocations": "6",
+      "allocated_bytes": "166"
+    },
+    {
+      "scenario": "sparse",
+      "options": "128",
+      "parser": "clap_lex",
+      "allocations": "6",
+      "allocated_bytes": "166"
+    },
+    {
+      "scenario": "dense",
+      "options": "128",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "dense",
+      "options": "128",
+      "parser": "clap",
+      "allocations": "1466",
+      "allocated_bytes": "125776"
+    },
+    {
+      "scenario": "dense",
+      "options": "128",
+      "parser": "lexopt",
+      "allocations": "193",
+      "allocated_bytes": "5280"
+    },
+    {
+      "scenario": "dense",
+      "options": "128",
+      "parser": "pico-args",
+      "allocations": "161",
+      "allocated_bytes": "5152"
+    },
+    {
+      "scenario": "dense",
+      "options": "128",
+      "parser": "clap_lex",
+      "allocations": "161",
+      "allocated_bytes": "5152"
+    },
+    {
+      "scenario": "sparse",
+      "options": "256",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "sparse",
+      "options": "256",
+      "parser": "clap",
+      "allocations": "1070",
+      "allocated_bytes": "131024"
+    },
+    {
+      "scenario": "sparse",
+      "options": "256",
+      "parser": "lexopt",
+      "allocations": "7",
+      "allocated_bytes": "146"
+    },
+    {
+      "scenario": "sparse",
+      "options": "256",
+      "parser": "pico-args",
+      "allocations": "5",
+      "allocated_bytes": "138"
+    },
+    {
+      "scenario": "sparse",
+      "options": "256",
+      "parser": "clap_lex",
+      "allocations": "5",
+      "allocated_bytes": "138"
+    },
+    {
+      "scenario": "dense",
+      "options": "256",
+      "parser": "zclap",
+      "allocations": "0",
+      "allocated_bytes": "0"
+    },
+    {
+      "scenario": "dense",
+      "options": "256",
+      "parser": "clap",
+      "allocations": "2910",
+      "allocated_bytes": "252016"
+    },
+    {
+      "scenario": "dense",
+      "options": "256",
+      "parser": "lexopt",
+      "allocations": "385",
+      "allocated_bytes": "10560"
+    },
+    {
+      "scenario": "dense",
+      "options": "256",
+      "parser": "pico-args",
+      "allocations": "321",
+      "allocated_bytes": "10304"
+    },
+    {
+      "scenario": "dense",
+      "options": "256",
+      "parser": "clap_lex",
+      "allocations": "321",
+      "allocated_bytes": "10304"
+    }
+  ]
+}

@@ -122,8 +122,21 @@ and a bare `thumbv7em-none-eabi` no_std target are covered by CI.
 The isolated [`comparison/`](comparison/) project compares the same grammar and
 inputs with clap, lexopt, pico-args and clap_lex at 4–256 definitions. It records
 latency, throughput, allocation requests, binary size and clean compile time.
-See its README for commands, exact crate versions and measurement limits.
-Only measured results are reported; there is no universal speed guarantee.
+On the recorded Linux / Xeon 8573C host (Rust 1.99.1, opt-level 3, thin LTO):
+
+| Dense input | zclap | clap | lexopt | pico-args | clap_lex |
+|---|---:|---:|---:|---:|---:|
+| 4 definitions | 0.159 µs | 2.263 µs | 0.252 µs | 0.195 µs | 0.283 µs |
+| 256 definitions | 19.379 µs | 14,496.541 µs | 25.194 µs | 159.931 µs | 26.023 µs |
+
+zclap allocated zero times in all measured cases. Its 256-option dense median
+fell from 119.3 µs to 19.4 µs after indexing long names and required-state checks.
+These are complete parses of the shared long-option grammar, including result
+consumption. Shared-host scheduling produces outliers; see the
+[full report and every sample](comparison/results/final.md) for ranges, all
+sizes, allocations, binary sizes and compilation times. Reproduce with
+`python3 comparison/run.py --label local`. Results describe these workloads,
+not a universal speed guarantee.
 
 `Release` → `Run workflow` supports patch/minor/major/manual versions, `current`
 for the first 0.1.0 release, and `resume` for an interrupted publication. Add

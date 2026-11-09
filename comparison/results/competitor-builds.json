@@ -1,0 +1,116 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-11-09T18:36:39.367816+00:00",
+    "git_commit": "607fce2e62b4d926e9be315f95246e3de7be0650",
+    "git_dirty": true,
+    "source_sha256": {
+      "Cargo.toml": "0b02aefb75d1e3b70725651be4d2986fac5cf27baf34883fec8e1cca6156daf4",
+      "comparison/Cargo.lock": "0859a379931ccda9ba14d78bcb108caf9f603e6a183637e5b306e75a0ba245b0",
+      "comparison/Cargo.toml": "0cf9ebb710993c6bb874abf5c45e59bfc0503cd2dc7ff62eda309af3e389a971",
+      "comparison/src/bin/size_clap.rs": "7009dcd070d16b1b015e56be22824f57da31555d4e68383d7489384657847c0c",
+      "comparison/src/bin/size_clap_lex.rs": "6482df0f02e5f1f243ac27bb4ce31243c3811f0fcc0863601340bd6697616f25",
+      "comparison/src/bin/size_lexopt.rs": "c30d4310afc2953d67d57e898f49488f5df6e55767c1820c6485dd36c45febda",
+      "comparison/src/bin/size_pico_args.rs": "6d645cae2f9a28cc4addde6e1064cdf7ed6a075a94adbc277c6f42fc4813da2b",
+      "comparison/src/bin/size_zclap.rs": "dacba12a87149c64fe1718a243f514f86c0a98163c289d262dd87c0bfc11c33d",
+      "comparison/src/lib.rs": "f7c0387f9eec83e660d8255cc3cdd08f942f43a3039e10e2fd5bf59abc8581db",
+      "comparison/src/main.rs": "ac1aa553df0e43781f01951c71e1959dcdd3b2169f8e14920ad0aec26fb13ccd",
+      "src/input.rs": "67d2b6e28db684ce562ab9da1593157e01028b1f48c7dffa99eaa5609fc2815e",
+      "src/lib.rs": "801606500a529e70b113c58f76efec13ecb9ac0a37974e72bf612567a91b0404",
+      "src/style.rs": "7ee1920bf42702e009e0e9164d07b0584d3f890908610658d4d18a4e395caad9"
+    },
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.1\nLLVM version: 23.1.1",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "os": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "pinned_cpu": 0,
+    "build_target_directory": "/tmp/zclap-comparison-target",
+    "profile": {
+      "opt_level": 3,
+      "lto": "thin",
+      "codegen_units": 1,
+      "strip": true
+    },
+    "rustflags": "",
+    "packages": {
+      "anstyle": "1.0.14",
+      "clap": "4.6.7",
+      "clap_builder": "4.6.7",
+      "clap_lex": "1.1.1",
+      "lexopt": "0.3.2",
+      "pico-args": "0.5.0",
+      "zclap": "0.1.0",
+      "zclap-comparison": "0.0.0"
+    },
+    "notes": [
+      "Shared cloud host; CPU affinity is used where supported; turbo and neighboring workloads are not controlled.",
+      "Timing builds have no counting allocator. Allocation builds count alloc, alloc_zeroed and realloc calls separately from timing.",
+      "Definitions are prepared once outside the timed loop. Every parse includes input ownership required by each API, semantic validation, result reading and drop.",
+      "Build timings start with an empty target directory and use a warm local registry cache; network download time is excluded."
+    ]
+  },
+  "parameters": {
+    "label": "competitor-builds",
+    "rounds": 7,
+    "millis": 40,
+    "compile_rounds": 3,
+    "skip_build_metrics": false,
+    "metrics_only": true,
+    "cpu": null,
+    "build_parsers": [
+      "clap",
+      "lexopt",
+      "pico-args",
+      "clap_lex"
+    ]
+  },
+  "builds": [
+    {
+      "parser": "clap",
+      "binary_bytes": 563072,
+      "min_compile_s": 9.00603025399323,
+      "median_compile_s": 10.429514258998097,
+      "max_compile_s": 22.227164196010563,
+      "compile_samples_s": [
+        22.227164196010563,
+        9.00603025399323,
+        10.429514258998097
+      ]
+    },
+    {
+      "parser": "lexopt",
+      "binary_bytes": 338968,
+      "min_compile_s": 3.620231248001801,
+      "median_compile_s": 3.6807821090042125,
+      "max_compile_s": 3.7702148770040367,
+      "compile_samples_s": [
+        3.7702148770040367,
+        3.6807821090042125,
+        3.620231248001801
+      ]
+    },
+    {
+      "parser": "pico-args",
+      "binary_bytes": 335816,
+      "min_compile_s": 3.228827236001962,
+      "median_compile_s": 3.430278180007008,
+      "max_compile_s": 4.074476868001511,
+      "compile_samples_s": [
+        3.430278180007008,
+        3.228827236001962,
+        4.074476868001511
+      ]
+    },
+    {
+      "parser": "clap_lex",
+      "binary_bytes": 328768,
+      "min_compile_s": 3.430990448992816,
+      "median_compile_s": 3.4720226070057834,
+      "max_compile_s": 3.7257013990019914,
+      "compile_samples_s": [
+        3.4720226070057834,
+        3.430990448992816,
+        3.7257013990019914
+      ]
+    }
+  ]
+}

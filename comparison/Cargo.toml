@@ -1,0 +1,60 @@
+[package]
+name = "zclap-comparison"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[features]
+default = ["all"]
+all = ["with-zclap", "with-clap", "with-lexopt", "with-pico", "with-clap-lex"]
+with-zclap = ["dep:zclap"]
+with-clap = ["dep:clap"]
+with-lexopt = ["dep:lexopt"]
+with-pico = ["dep:pico-args"]
+with-clap-lex = ["dep:clap_lex"]
+allocation-counting = []
+
+[dependencies]
+zclap = { path = "..", optional = true }
+clap = { version = "=4.6.7", default-features = false, features = ["std", "string"], optional = true }
+lexopt = { version = "=0.3.2", optional = true }
+pico-args = { version = "=0.5.0", default-features = false, features = ["eq-separator", "short-space-opt", "combined-flags"], optional = true }
+clap_lex = { version = "=1.1.1", optional = true }
+
+[[bin]]
+name = "benchmark"
+path = "src/main.rs"
+required-features = ["all"]
+
+[[bin]]
+name = "size-zclap"
+path = "src/bin/size_zclap.rs"
+required-features = ["with-zclap"]
+
+[[bin]]
+name = "size-clap"
+path = "src/bin/size_clap.rs"
+required-features = ["with-clap"]
+
+[[bin]]
+name = "size-lexopt"
+path = "src/bin/size_lexopt.rs"
+required-features = ["with-lexopt"]
+
+[[bin]]
+name = "size-pico-args"
+path = "src/bin/size_pico_args.rs"
+required-features = ["with-pico"]
+
+[[bin]]
+name = "size-clap-lex"
+path = "src/bin/size_clap_lex.rs"
+required-features = ["with-clap-lex"]
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = true
