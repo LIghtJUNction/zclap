@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        default: ''
+      version:
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: '1'
+  RUSTDOCFLAGS: -D warnings
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / Rust ${{ matrix.rust }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            rust: stable
+          - os: macos-latest
+            rust: stable
+          - os: windows-latest
+            rust: stable
+          - os: ubuntu-latest
+            rust: 1.74.0
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Apply release candidate version
+        if: inputs.version != ''
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: python scripts/release.py set-version "$RELEASE_VERSION"
+      - name: Install Rust
+        env:
+          RUST_VERSION: ${{ matrix.rust }}
+        run: |
+          rustup toolchain install "$RUST_VERSION" --profile minimal --component rustfmt --component clippy
+          rustup default "$RUST_VERSION"
+          rustc --version --verbose
+          cargo --version
+      - name: Unit, integration, example, and documentation tests
+        run: |
+          cargo test --locked --all-targets
+          cargo test --locked --doc
+          cargo test --locked --all-targets --no-default-features
+          cargo test --locked --doc --no-default-features
+          cargo test --locked --all-targets --all-features
+      - name: Clippy (all and minimal features)
+        run: |
+          cargo clippy --locked --all-targets --all-features -- -D warnings
+          cargo clippy --locked --all-targets --no-default-features -- -D warnings
+      - name: Package validation
+        run: cargo package --locked --allow-dirty
+      - name: Formatting, documentation, dependency and release-script checks
+        if: matrix.os == 'ubuntu-latest' && matrix.rust == 'stable'
+        run: |
+          cargo fmt --all --check
+          cargo doc --locked --no-deps --all-features
+          python scripts/audit.py
+          python -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: Compile without an allocator or operating system
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          rustup target add thumbv7em-none-eabi
+          cargo check --locked --lib --no-default-features --target thumbv7em-none-eabi

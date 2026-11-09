@@ -1,0 +1,94 @@
+name: Performance
+run-name: Performance / ${{ github.ref_name }} / ${{ inputs.rounds }} rounds
+
+on:
+  workflow_dispatch:
+    inputs:
+      rounds:
+        description: 'Independent timing rounds (5–30)'
+        type: number
+        default: 7
+        required: true
+      millis:
+        description: 'Minimum milliseconds per timing sample (10–1000)'
+        type: number
+        default: 40
+        required: true
+      compile_rounds:
+        description: 'Clean builds per parser (3–10)'
+        type: number
+        default: 3
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zclap-performance-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CARGO_INCREMENTAL: '0'
+      BENCH_LABEL: actions-${{ github.run_id }}-${{ github.run_attempt }}
+      BENCH_ROUNDS: ${{ inputs.rounds }}
+      BENCH_MILLIS: ${{ inputs.millis }}
+      COMPILE_ROUNDS: ${{ inputs.compile_rounds }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Validate measurement parameters
+        run: |
+          python - <<'PY'
+          import os
+          for name, low, high in [
+              ('BENCH_ROUNDS', 5, 30),
+              ('BENCH_MILLIS', 10, 1000),
+              ('COMPILE_ROUNDS', 3, 10),
+          ]:
+              try:
+                  value = int(os.environ[name])
+              except ValueError:
+                  raise SystemExit(f'{name} must be an integer')
+              if not low <= value <= high:
+                  raise SystemExit(f'{name} must be between {low} and {high}')
+          PY
+      - name: Install stable Rust and record runner context
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/zclap-comparison-target" >> "$GITHUB_ENV"
+          {
+            uname -a
+            lscpu
+            rustc -Vv
+            cargo -V
+          } > "$RUNNER_TEMP/$BENCH_LABEL-platform.txt"
+      - name: Measure the complete comparison suite
+        run: |
+          python comparison/run.py \
+            --label "$BENCH_LABEL" \
+            --rounds "$BENCH_ROUNDS" \
+            --millis "$BENCH_MILLIS" \
+            --compile-rounds "$COMPILE_ROUNDS" \
+            2>&1 | tee "$RUNNER_TEMP/$BENCH_LABEL.log"
+      - name: Summarize recorded measurements
+        run: cat "comparison/results/$BENCH_LABEL.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve every sample and diagnostic
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: ${{ env.BENCH_LABEL }}
+          path: |
+            comparison/results/${{ env.BENCH_LABEL }}*
+            ${{ runner.temp }}/${{ env.BENCH_LABEL }}*
+          if-no-files-found: warn
+          retention-days: 90

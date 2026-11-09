@@ -132,4 +132,11 @@ inherited by GitHub. Cross-platform checks gate the version commit/tag,
 crates.io publication and GitHub Release. Missing credentials stop before
 modifying the repository.
 
+To request a release through Git, commit a change to
+`.github/release-request.json` on `main`, containing exactly
+`{"bump":"current","version":""}` for the first release, or the same supported
+bump/version choices as the manual workflow. Changing this file intentionally
+starts the same credential checks, full CI, and publication pipeline. Other
+pushes do not trigger publication; the default-branch guard still applies.
+
 MIT license.

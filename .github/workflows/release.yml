@@ -1,0 +1,99 @@
+name: Release
+run-name: Release ${{ inputs.bump || 'committed request' }} ${{ inputs.version }}
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/release-request.json]
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'current: first release; resume: finish an existing tag'
+        type: choice
+        required: true
+        default: patch
+        options: [patch, minor, major, manual, current, resume]
+      version:
+        description: 'Full version for manual/resume, e.g. 0.2.0 (no v prefix)'
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zclap-release
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.plan.outputs.version }}
+      source: ${{ steps.plan.outputs.source }}
+      tag: ${{ steps.plan.outputs.tag }}
+      kind: ${{ steps.plan.outputs.kind }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Check credentials and calculate version
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          RELEASE_BUMP: ${{ inputs.bump }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = push ]; then
+            python scripts/release.py plan --request .github/release-request.json
+          else
+            python scripts/release.py plan --kind "$RELEASE_BUMP" --version "$RELEASE_VERSION"
+          fi
+  checks:
+    needs: plan
+    uses: ./.github/workflows/ci.yml
+    with:
+      ref: ${{ needs.plan.outputs.source }}
+      version: ${{ needs.plan.outputs.version }}
+  publish:
+    needs: [plan, checks]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ needs.plan.outputs.source }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install Rust
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+      - name: Commit, tag, publish, and verify
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          RELEASE_BUMP: ${{ needs.plan.outputs.kind }}
+          RELEASE_SOURCE: ${{ needs.plan.outputs.source }}
+          RELEASE_VERSION: ${{ needs.plan.outputs.version }}
+        run: python scripts/release.py publish --source "$RELEASE_SOURCE" --version "$RELEASE_VERSION" --kind "$RELEASE_BUMP"
+      - name: Retain release diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: release-${{ needs.plan.outputs.tag }}-${{ github.run_attempt }}
+          path: |
+            target/release-state.json
+            target/package/*.crate
+          if-no-files-found: ignore
+          retention-days: 30
