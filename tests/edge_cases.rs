@@ -216,14 +216,9 @@ fn deterministic_arbitrary_bytes_terminate_without_panicking() {
         let input = [&bytes[..]];
         let mut parser = COUNT.parse_bytes(&input);
         let mut events = 0;
-        loop {
-            match parser.next() {
-                Ok(Some(_)) => {
-                    events += 1;
-                    assert!(events <= bytes.len());
-                }
-                Ok(None) | Err(_) => break,
-            }
+        while let Ok(Some(_)) = parser.next() {
+            events += 1;
+            assert!(events <= bytes.len());
         }
         let _ = parser.finish();
     }

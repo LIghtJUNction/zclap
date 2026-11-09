@@ -11,7 +11,9 @@ struct Counting;
 
 fn count() {
     let _ = CALLS.try_with(|value| {
-        if let Some(n) = value.get() { value.set(Some(n + 1)); }
+        if let Some(n) = value.get() {
+            value.set(Some(n + 1));
+        }
     });
 }
 
@@ -40,7 +42,10 @@ unsafe impl GlobalAlloc for Counting {
 #[global_allocator]
 static ALLOCATOR: Counting = Counting;
 
-struct Buffer { bytes: [u8; 4096], len: usize }
+struct Buffer {
+    bytes: [u8; 4096],
+    len: usize,
+}
 
 impl Write for Buffer {
     fn write_str(&mut self, s: &str) -> std::fmt::Result {
@@ -54,7 +59,11 @@ impl Write for Buffer {
 
 fn measured(f: impl FnOnce()) -> usize {
     struct Reset;
-    impl Drop for Reset { fn drop(&mut self) { CALLS.with(|n| n.set(None)); } }
+    impl Drop for Reset {
+        fn drop(&mut self) {
+            CALLS.with(|n| n.set(None));
+        }
+    }
     CALLS.with(|n| n.set(Some(0)));
     let _reset = Reset;
     f();
@@ -73,10 +82,15 @@ fn parsing_validation_errors_and_rendering_allocate_nothing() {
         let argv = ["-vvv", "--mode=fast", "input"];
         let mut parser = CLI.parse(&argv);
         let mut events = 0;
-        while parser.next().unwrap().is_some() { events += 1; }
+        while parser.next().unwrap().is_some() {
+            events += 1;
+        }
         parser.finish().unwrap();
         assert_eq!(events, 5);
-        let mut out = Buffer { bytes: [0; 4096], len: 0 };
+        let mut out = Buffer {
+            bytes: [0; 4096],
+            len: 0,
+        };
         Style::default().help(&CLI, &mut out).unwrap();
         let argv = ["--mode=invalid"];
         let error = CLI.parse(&argv).next().unwrap_err();
@@ -91,10 +105,16 @@ fn parsing_validation_errors_and_rendering_allocate_nothing() {
 #[cfg(feature = "std")]
 #[test]
 fn os_adapter_adds_no_allocations() {
-    let args = [std::ffi::OsString::from("--mode=safe"), std::ffi::OsString::from("input")];
-    assert_eq!(measured(|| {
-        let mut parser = CLI.parse_os(&args);
-        while parser.next().unwrap().is_some() {}
-        parser.finish().unwrap();
-    }), 0);
+    let args = [
+        std::ffi::OsString::from("--mode=safe"),
+        std::ffi::OsString::from("input"),
+    ];
+    assert_eq!(
+        measured(|| {
+            let mut parser = CLI.parse_os(&args);
+            while parser.next().unwrap().is_some() {}
+            parser.finish().unwrap();
+        }),
+        0
+    );
 }

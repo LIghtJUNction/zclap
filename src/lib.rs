@@ -206,6 +206,14 @@ impl<'s> Arg<'s> {
     pub const fn choices(&self) -> &'s [&'s str] {
         self.choices
     }
+    /// ID of the mutually exclusive argument, when configured.
+    pub const fn conflict_target(&self) -> Option<&'s str> {
+        self.conflict
+    }
+    /// ID required when this argument appears, when configured.
+    pub const fn requires_target(&self) -> Option<&'s str> {
+        self.require
+    }
 }
 
 /// A borrowed command definition. All builders support constant evaluation.
@@ -221,6 +229,12 @@ pub struct Command<'s> {
     commands: &'s [Command<'s>],
     definition_error: Option<Error<'s>>,
     rules: bool,
+    has_alias: bool,
+    // Compact, const-prepared metadata. Larger commands retain a linear fallback.
+    long_order: [u16; 256],
+    long_count: usize,
+    required: [u64; 4],
+    related: [u64; 4],
 }
 
 impl<'s> Command<'s> {
@@ -233,6 +247,11 @@ impl<'s> Command<'s> {
             commands: &[],
             definition_error: None,
             rules: false,
+            has_alias: false,
+            long_order: [0; 256],
+            long_count: 0,
+            required: [0; 4],
+            related: [0; 4],
         }
     }
     /// Set descriptive text.
@@ -244,12 +263,42 @@ impl<'s> Command<'s> {
     pub const fn args(mut self, args: &'s [Arg<'s>]) -> Self {
         self.args = args;
         self.rules = false;
+        self.has_alias = false;
+        self.long_count = 0;
+        self.required = [0; 4];
+        self.related = [0; 4];
         let mut i = 0;
         while i < args.len() {
+            self.has_alias = self.has_alias || args[i].alias.is_some();
             self.rules = self.rules
                 || args[i].required
                 || args[i].conflict.is_some()
                 || args[i].require.is_some();
+            if args.len() <= 256 {
+                if args[i].required {
+                    self.required[i / 64] |= 1 << (i % 64);
+                }
+                if args[i].conflict.is_some() || args[i].require.is_some() {
+                    self.related[i / 64] |= 1 << (i % 64);
+                }
+                if let Some(name) = args[i].long {
+                    let mut at = self.long_count;
+                    while at > 0 {
+                        let previous = self.long_order[at - 1] as usize;
+                        let previous_name = match args[previous].long {
+                            Some(s) => s,
+                            None => "",
+                        };
+                        if !less(name, previous_name) {
+                            break;
+                        }
+                        self.long_order[at] = self.long_order[at - 1];
+                        at -= 1;
+                    }
+                    self.long_order[at] = i as u16;
+                    self.long_count += 1;
+                }
+            }
             i += 1;
         }
         self.definition_error = self.check_definition();
@@ -299,9 +348,9 @@ impl<'s> Command<'s> {
     ///
     /// ```
     /// # use zclap::Command;
-    /// let cli = Command::new("large");
+    /// const CLI: Command = Command::new("large");
     /// let argv: [&str; 0] = [];
-    /// let mut parser = cli.parse_with::<8, _>(&argv); // 512 definitions
+    /// let mut parser = CLI.parse_with::<8, _>(&argv); // 512 definitions
     /// parser.finish()?;
     /// # Ok::<(), zclap::Error<'static>>(())
     /// ```
@@ -442,9 +491,37 @@ impl<'s> Command<'s> {
     }
 
     fn long_index(&self, name: &[u8]) -> Option<usize> {
-        self.args.iter().position(|arg| {
-            arg.long.is_some_and(|s| s.as_bytes() == name)
-                || arg.alias.is_some_and(|s| s.as_bytes() == name)
+        let found = if self.long_count >= 16 {
+            let mut left = 0;
+            let mut right = self.long_count;
+            let mut found = None;
+            while left < right {
+                let mid = left + (right - left) / 2;
+                let i = self.long_order[mid] as usize;
+                let candidate = self.args[i].long.unwrap_or("").as_bytes();
+                match name.cmp(candidate) {
+                    core::cmp::Ordering::Less => right = mid,
+                    core::cmp::Ordering::Greater => left = mid + 1,
+                    core::cmp::Ordering::Equal => {
+                        found = Some(i);
+                        break;
+                    }
+                }
+            }
+            found
+        } else {
+            self.args
+                .iter()
+                .position(|arg| arg.long.is_some_and(|s| s.as_bytes() == name))
+        };
+        found.or_else(|| {
+            if self.has_alias {
+                self.args
+                    .iter()
+                    .position(|arg| arg.alias.is_some_and(|s| s.as_bytes() == name))
+            } else {
+                None
+            }
         })
     }
 
@@ -471,6 +548,19 @@ const fn eq(a: &str, b: &str) -> bool {
         i += 1;
     }
     true
+}
+
+const fn less(a: &str, b: &str) -> bool {
+    let a = a.as_bytes();
+    let b = b.as_bytes();
+    let mut i = 0;
+    while i < a.len() && i < b.len() {
+        if a[i] != b[i] {
+            return a[i] < b[i];
+        }
+        i += 1;
+    }
+    a.len() < b.len()
 }
 
 const fn same_option(a: Option<&str>, b: Option<&str>) -> bool {
@@ -1020,30 +1110,51 @@ impl<'s, 'a, T: input::Input, const WORDS: usize> Parser<'s, 'a, T, WORDS> {
         if !self.command.rules {
             return Ok(());
         }
+        if self.command.args.len() <= 256 {
+            for word in 0..WORDS.min(4) {
+                let missing = self.command.required[word] & !self.seen[word];
+                let mut candidates = missing | (self.command.related[word] & self.seen[word]);
+                while candidates != 0 {
+                    let bit = candidates.trailing_zeros() as usize;
+                    let arg = &self.command.args[word * 64 + bit];
+                    if missing & (1 << bit) != 0 {
+                        return Err(Error::MissingRequired { arg: arg.id });
+                    }
+                    self.validate_relation(arg)?;
+                    candidates &= candidates - 1;
+                }
+            }
+            return Ok(());
+        }
         for (i, arg) in self.command.args.iter().enumerate() {
             let present = self.present(i);
             if arg.required && !present {
                 return Err(Error::MissingRequired { arg: arg.id });
             }
             if present {
-                if let Some(other) = arg.conflict {
-                    if self
-                        .command
-                        .id_index(other)
-                        .is_some_and(|i| self.present(i))
-                    {
-                        return Err(Error::Conflict { arg: arg.id, other });
-                    }
-                }
-                if let Some(other) = arg.require {
-                    if !self
-                        .command
-                        .id_index(other)
-                        .is_some_and(|i| self.present(i))
-                    {
-                        return Err(Error::Requires { arg: arg.id, other });
-                    }
-                }
+                self.validate_relation(arg)?;
+            }
+        }
+        Ok(())
+    }
+
+    fn validate_relation(&self, arg: &Arg<'s>) -> Result<(), Error<'s>> {
+        if let Some(other) = arg.conflict {
+            if self
+                .command
+                .id_index(other)
+                .is_some_and(|i| self.present(i))
+            {
+                return Err(Error::Conflict { arg: arg.id, other });
+            }
+        }
+        if let Some(other) = arg.require {
+            if !self
+                .command
+                .id_index(other)
+                .is_some_and(|i| self.present(i))
+            {
+                return Err(Error::Requires { arg: arg.id, other });
             }
         }
         Ok(())

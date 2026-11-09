@@ -49,19 +49,21 @@ pub struct Style<'a> {
 impl Style<'_> {
     /// Plain text with no ANSI sequences, two-space indentation, and width 80.
     pub const fn plain() -> Self {
-        Self {
-            title: ("", ""),
-            option: ("", ""),
-            value: ("", ""),
-            error: ("", ""),
-            hint: ("", ""),
-            indent: 2,
-            gap: 2,
-            width: 80,
-            help_layout: None,
-            error_layout: None,
-        }
+        Self::PLAIN
     }
+
+    const PLAIN: Self = Self {
+        title: ("", ""),
+        option: ("", ""),
+        value: ("", ""),
+        error: ("", ""),
+        hint: ("", ""),
+        indent: 2,
+        gap: 2,
+        width: 80,
+        help_layout: None,
+        error_layout: None,
+    };
 
     /// Write help into a caller-owned formatter. Errors from the writer propagate.
     pub fn help(&self, command: &Command<'_>, out: &mut dyn Write) -> fmt::Result {
