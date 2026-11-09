@@ -1,0 +1,27 @@
+[package]
+name = "zclap"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.74"
+description = "Small, allocation-free command-line parsing with borrowed events"
+license = "MIT"
+repository = "https://github.com/LIghtJUNction/zclap"
+readme = "README.md"
+keywords = ["cli", "argument", "parser", "no-std", "zero-copy"]
+categories = ["command-line-interface", "no-std", "parsing"]
+include = ["src/**", "tests/**", "examples/**", "Cargo.toml", "Cargo.lock", "README.md", "LICENSE"]
+
+[features]
+default = ["std"]
+std = []
+
+[workspace]
+exclude = ["comparison"]
+
+[[example]]
+name = "demo"
+required-features = ["std"]
+
+[[example]]
+name = "style"
+required-features = ["std"]
