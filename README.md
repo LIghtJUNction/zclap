@@ -130,24 +130,33 @@ and a bare `thumbv7em-none-eabi` no_std target are covered by CI.
 ## Performance and releases
 
 The isolated [`comparison/`](comparison/) project compares the same grammar and
-inputs with clap, lexopt, pico-args and clap_lex at 4–256 definitions. It records
-latency, throughput, allocation requests, binary size and clean compile time.
-The initial 0.1.0 measurements on Linux / Xeon 8573C (Rust 1.99.1,
-opt-level 3, thin LTO) were:
+inputs with clap, lexopt, pico-args and clap_lex: 4–256 definitions, short clusters,
+repeated flags/values, mixed syntax and nested subcommands. It records latency,
+throughput, allocations, binary size and clean compile time. Representative
+0.1.1 candidate medians in **µs per complete parse**, including validation and
+result reading, on Linux / Xeon 8573C (Rust 1.99.1, opt-level 3, thin LTO):
 
-| Dense input | zclap | clap | lexopt | pico-args | clap_lex |
+| Input | zclap | clap | lexopt | pico-args | clap_lex |
 |---|---:|---:|---:|---:|---:|
-| 4 definitions | 0.159 µs | 2.263 µs | 0.252 µs | 0.195 µs | 0.283 µs |
-| 256 definitions | 19.379 µs | 14,496.541 µs | 25.194 µs | 159.931 µs | 26.023 µs |
+| Short cluster, 5 definitions | 0.118 | 2.640 | 0.192 | 0.378 | 0.156 |
+| Repeated flags and values, 5 | 0.293 | 4.633 | 0.512 | 1.524 | 0.465 |
+| Mixed syntax, 5 | 0.213 | 3.558 | 0.327 | 0.708 | 0.271 |
+| Nested subcommands, 5 | 0.186 | 4.078 | 0.317 | 0.709 | 0.251 |
+| Dense long options, 256 | 21.162 | 14,611.691 | 28.456 | 150.281 | 29.000 |
 
-zclap allocated zero times in all measured cases. Its 256-option dense median
-fell from 119.3 µs to 19.4 µs after indexing long names and required-state checks.
-These are complete parses of the shared long-option grammar, including result
-consumption. Shared-host scheduling produces outliers; see the
-[full report and every sample](comparison/results/final.md) for ranges, all
-sizes, allocations, binary sizes and compilation times. Reproduce with
-`python3 comparison/run.py --label local`. Results describe these workloads,
-not a universal speed guarantee.
+The recorded comparison rotates three revisions over 15 samples per workload.
+zclap allocated zero times in all 21 workloads. Caching command-name validation
+reduced the focused 128-byte-name median from 285.7 to 191.1 ns; small common
+cases include slower medians and overlapping ranges. On this target, `Command`
+shrunk from 696 to 440 bytes and `Arg` grew from 136 to 160 bytes for plural
+configuration, so larger definition sets use more static storage.
+
+See the [full report and raw samples](comparison/results/v0_1_1.md) for ranges,
+throughput, all sizes, allocations, binary sizes, compilation times and exact
+reproduction commands. A fresh single-version run is
+`python3 comparison/run.py --label local`. Measurements use prepared definitions
+and warm UTF-8 inputs; process startup, non-UTF-8 inputs and rendering are outside
+the timed grammar. Results describe these workloads and this shared host.
 
 `Release` → `Run workflow` supports patch/minor/major/manual versions, `current`
 for the first 0.1.0 release, and `resume` for an interrupted publication. Add

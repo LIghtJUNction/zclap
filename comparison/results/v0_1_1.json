@@ -1,0 +1,593 @@
+{
+  "protocol": {
+    "cpu": 7,
+    "passes": 3,
+    "rounds_per_pass": 5,
+    "target_millis": 40,
+    "schedule": [
+      {
+        "pass": 0,
+        "position": 0,
+        "capture": "v0_1_0-expanded",
+        "started_utc": "2026-11-10T03:00:54.962835+00:00",
+        "finished_utc": "2026-11-10T03:01:19.630862+00:00"
+      },
+      {
+        "pass": 0,
+        "position": 1,
+        "capture": "v0_1_1-pre",
+        "started_utc": "2026-11-10T03:01:19.630950+00:00",
+        "finished_utc": "2026-11-10T03:01:43.776453+00:00"
+      },
+      {
+        "pass": 0,
+        "position": 2,
+        "capture": "v0_1_1-final",
+        "started_utc": "2026-11-10T03:01:43.776490+00:00",
+        "finished_utc": "2026-11-10T03:02:09.508793+00:00"
+      },
+      {
+        "pass": 1,
+        "position": 0,
+        "capture": "v0_1_1-pre",
+        "started_utc": "2026-11-10T03:02:09.508832+00:00",
+        "finished_utc": "2026-11-10T03:02:34.184094+00:00"
+      },
+      {
+        "pass": 1,
+        "position": 1,
+        "capture": "v0_1_1-final",
+        "started_utc": "2026-11-10T03:02:34.184126+00:00",
+        "finished_utc": "2026-11-10T03:03:00.762378+00:00"
+      },
+      {
+        "pass": 1,
+        "position": 2,
+        "capture": "v0_1_0-expanded",
+        "started_utc": "2026-11-10T03:03:00.762412+00:00",
+        "finished_utc": "2026-11-10T03:03:26.437951+00:00"
+      },
+      {
+        "pass": 2,
+        "position": 0,
+        "capture": "v0_1_1-final",
+        "started_utc": "2026-11-10T03:03:26.437992+00:00",
+        "finished_utc": "2026-11-10T03:03:50.868429+00:00"
+      },
+      {
+        "pass": 2,
+        "position": 1,
+        "capture": "v0_1_0-expanded",
+        "started_utc": "2026-11-10T03:03:50.868476+00:00",
+        "finished_utc": "2026-11-10T03:04:15.197727+00:00"
+      },
+      {
+        "pass": 2,
+        "position": 2,
+        "capture": "v0_1_1-pre",
+        "started_utc": "2026-11-10T03:04:15.197770+00:00",
+        "finished_utc": "2026-11-10T03:04:39.287507+00:00"
+      }
+    ]
+  },
+  "environment": {
+    "timestamp_utc": "2026-11-10T03:00:00.461469+00:00",
+    "git_commit": "9c5b011e6c76dfcd3b3d1b3c0fbb942a1df481e3",
+    "git_dirty": true,
+    "source_sha256": {
+      "Cargo.toml": "0b02aefb75d1e3b70725651be4d2986fac5cf27baf34883fec8e1cca6156daf4",
+      "comparison/Cargo.lock": "0859a379931ccda9ba14d78bcb108caf9f603e6a183637e5b306e75a0ba245b0",
+      "comparison/Cargo.toml": "0cf9ebb710993c6bb874abf5c45e59bfc0503cd2dc7ff62eda309af3e389a971",
+      "comparison/src/bin/size_clap.rs": "7009dcd070d16b1b015e56be22824f57da31555d4e68383d7489384657847c0c",
+      "comparison/src/bin/size_clap_lex.rs": "6482df0f02e5f1f243ac27bb4ce31243c3811f0fcc0863601340bd6697616f25",
+      "comparison/src/bin/size_lexopt.rs": "c30d4310afc2953d67d57e898f49488f5df6e55767c1820c6485dd36c45febda",
+      "comparison/src/bin/size_pico_args.rs": "6d645cae2f9a28cc4addde6e1064cdf7ed6a075a94adbc277c6f42fc4813da2b",
+      "comparison/src/bin/size_zclap.rs": "dacba12a87149c64fe1718a243f514f86c0a98163c289d262dd87c0bfc11c33d",
+      "comparison/src/lib.rs": "f7c0387f9eec83e660d8255cc3cdd08f942f43a3039e10e2fd5bf59abc8581db",
+      "comparison/src/main.rs": "ef0e3a54d0e30e7c0345949714fa4ab6e8c9f80e06805a56e1be583fc02ffb5c",
+      "comparison/src/scenarios.rs": "fc95f35bdb24f597d6c1b18d122d15f308ff18d6a6fce8b201a498e8b792eeac",
+      "src/input.rs": "67d2b6e28db684ce562ab9da1593157e01028b1f48c7dffa99eaa5609fc2815e",
+      "src/lib.rs": "38bf692a93e1dab87b9136a7e2c5c0f05da5da168e0a01f935e5291dec8ea258",
+      "src/style.rs": "fd51c15c7c257ba991d1659596c9a2b09184b734a64ac788b75d66e34847476a"
+    },
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.1\nLLVM version: 23.1.1",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "os": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "pinned_cpu": 7,
+    "build_target_directory": "/tmp/zclap-comparison-target",
+    "build_jobs": "1",
+    "profile": {
+      "opt_level": 3,
+      "lto": "thin",
+      "codegen_units": 1,
+      "strip": true
+    },
+    "rustflags": "",
+    "packages": {
+      "anstyle": "1.0.14",
+      "clap": "4.6.7",
+      "clap_builder": "4.6.7",
+      "clap_lex": "1.1.1",
+      "lexopt": "0.3.2",
+      "pico-args": "0.5.0",
+      "zclap": "0.1.0",
+      "zclap-comparison": "0.0.0"
+    },
+    "notes": [
+      "Shared cloud host; CPU affinity is used where supported; turbo and neighboring workloads are not controlled.",
+      "Timing builds have no counting allocator. Allocation builds count alloc, alloc_zeroed and realloc calls separately from timing.",
+      "Definitions are prepared once outside the timed loop. Every parse includes input ownership required by each API, semantic validation, result reading and drop.",
+      "Build timings start with an empty target directory and use a warm local registry cache; network download time is excluded.",
+      "The extended grammars use five leaf definitions: verbose, quiet, port, tag and a positional input; subcommands add two command levels.",
+      "Repeated-flag inputs contain four occurrences, inside clap's u8 counter range. Inputs use UTF-8, allowed tag values, and no escaped option-looking positional values.",
+      "Command-name cases vary only the command metadata name length (8/32/128 bytes); they share the same four-argument dense input."
+    ]
+  },
+  "verified_source_commits": {
+    "v0_1_0-expanded": {
+      "commit": "32df66134af7173db24d89cff6df4c44e9e3e5de",
+      "files": {
+        "Cargo.toml": {
+          "sha256": "0b02aefb75d1e3b70725651be4d2986fac5cf27baf34883fec8e1cca6156daf4",
+          "matches_capture": true
+        },
+        "src/lib.rs": {
+          "sha256": "309e398e7709f3d7df48108f8022983295674a838e6d4e74a9f8815df5a86a7a",
+          "matches_capture": true
+        },
+        "src/input.rs": {
+          "sha256": "67d2b6e28db684ce562ab9da1593157e01028b1f48c7dffa99eaa5609fc2815e",
+          "matches_capture": true
+        },
+        "src/style.rs": {
+          "sha256": "cbbb682010ad36b3b3eb7ae455ef0530efdb1b0d27eeae8487b2200c5785fbf6",
+          "matches_capture": true
+        }
+      }
+    },
+    "v0_1_1-pre": {
+      "commit": "9c5b011e6c76dfcd3b3d1b3c0fbb942a1df481e3",
+      "files": {
+        "Cargo.toml": {
+          "sha256": "0b02aefb75d1e3b70725651be4d2986fac5cf27baf34883fec8e1cca6156daf4",
+          "matches_capture": true
+        },
+        "src/lib.rs": {
+          "sha256": "0a88dc33aeb60c3991f7e0e3bc9589b9e2dc4fc19a5f6643bfa67a80d6d5129e",
+          "matches_capture": true
+        },
+        "src/input.rs": {
+          "sha256": "67d2b6e28db684ce562ab9da1593157e01028b1f48c7dffa99eaa5609fc2815e",
+          "matches_capture": true
+        },
+        "src/style.rs": {
+          "sha256": "fd51c15c7c257ba991d1659596c9a2b09184b734a64ac788b75d66e34847476a",
+          "matches_capture": true
+        }
+      }
+    },
+    "v0_1_1-final": {
+      "commit": "5802aa5c14631dfae5bd8d77a812b47f71043bcd",
+      "files": {
+        "Cargo.toml": {
+          "sha256": "0b02aefb75d1e3b70725651be4d2986fac5cf27baf34883fec8e1cca6156daf4",
+          "matches_capture": true
+        },
+        "src/lib.rs": {
+          "sha256": "38bf692a93e1dab87b9136a7e2c5c0f05da5da168e0a01f935e5291dec8ea258",
+          "matches_capture": true
+        },
+        "src/input.rs": {
+          "sha256": "67d2b6e28db684ce562ab9da1593157e01028b1f48c7dffa99eaa5609fc2815e",
+          "matches_capture": true
+        },
+        "src/style.rs": {
+          "sha256": "fd51c15c7c257ba991d1659596c9a2b09184b734a64ac788b75d66e34847476a",
+          "matches_capture": true
+        }
+      }
+    }
+  },
+  "reports": {
+    "v0_1_0-expanded": "v0_1_0-expanded.json",
+    "v0_1_1-pre": "v0_1_1-pre.json",
+    "v0_1_1-final": "v0_1_1-final.json"
+  },
+  "candidate_version_note": "The 0.1.1 implementation was measured before the release version bump; captured Cargo package metadata therefore reads 0.1.0. Original capture timestamps and dirty-worktree flags are retained.",
+  "comparisons": [
+    {
+      "scenario": "sparse",
+      "definitions": 4,
+      "baseline_ns": 171.727,
+      "pre_cache_ns": 165.954,
+      "final_ns": 192.209,
+      "final_min_ns": 161.075,
+      "final_max_ns": 252.268,
+      "baseline_change_percent": 11.927070291800357,
+      "cache_change_percent": 15.820649095532492,
+      "final_parses_per_second": 5202670.01024926
+    },
+    {
+      "scenario": "dense",
+      "definitions": 4,
+      "baseline_ns": 168.869,
+      "pre_cache_ns": 169.243,
+      "final_ns": 187.108,
+      "final_min_ns": 165.802,
+      "final_max_ns": 247.434,
+      "baseline_change_percent": 10.800679816899494,
+      "cache_change_percent": 10.555828010611968,
+      "final_parses_per_second": 5344506.915791949
+    },
+    {
+      "scenario": "sparse",
+      "definitions": 8,
+      "baseline_ns": 203.025,
+      "pre_cache_ns": 213.141,
+      "final_ns": 218.584,
+      "final_min_ns": 205.561,
+      "final_max_ns": 257.338,
+      "baseline_change_percent": 7.663588228050733,
+      "cache_change_percent": 2.5537085778897683,
+      "final_parses_per_second": 4574900.267174176
+    },
+    {
+      "scenario": "dense",
+      "definitions": 8,
+      "baseline_ns": 367.544,
+      "pre_cache_ns": 373.693,
+      "final_ns": 395.459,
+      "final_min_ns": 350.846,
+      "final_max_ns": 464.706,
+      "baseline_change_percent": 7.59500903293211,
+      "cache_change_percent": 5.824567224968091,
+      "final_parses_per_second": 2528707.1478964947
+    },
+    {
+      "scenario": "sparse",
+      "definitions": 16,
+      "baseline_ns": 204.355,
+      "pre_cache_ns": 210.022,
+      "final_ns": 205.837,
+      "final_min_ns": 187.074,
+      "final_max_ns": 248.956,
+      "baseline_change_percent": 0.7252085831029431,
+      "cache_change_percent": -1.992648389216367,
+      "final_parses_per_second": 4858213.052075186
+    },
+    {
+      "scenario": "dense",
+      "definitions": 16,
+      "baseline_ns": 1002.53,
+      "pre_cache_ns": 736.499,
+      "final_ns": 784.135,
+      "final_min_ns": 683.86,
+      "final_max_ns": 1633.8,
+      "baseline_change_percent": -21.784385504673175,
+      "cache_change_percent": 6.46789744453149,
+      "final_parses_per_second": 1275290.6068470352
+    },
+    {
+      "scenario": "sparse",
+      "definitions": 32,
+      "baseline_ns": 232.699,
+      "pre_cache_ns": 228.826,
+      "final_ns": 219.374,
+      "final_min_ns": 203.65,
+      "final_max_ns": 257.454,
+      "baseline_change_percent": -5.726281591240189,
+      "cache_change_percent": -4.130649489131477,
+      "final_parses_per_second": 4558425.337551396
+    },
+    {
+      "scenario": "dense",
+      "definitions": 32,
+      "baseline_ns": 2567.34,
+      "pre_cache_ns": 1646.065,
+      "final_ns": 1675.547,
+      "final_min_ns": 1465.179,
+      "final_max_ns": 2011.744,
+      "baseline_change_percent": -34.73606923897887,
+      "cache_change_percent": 1.7910592838071393,
+      "final_parses_per_second": 596820.0235505181
+    },
+    {
+      "scenario": "sparse",
+      "definitions": 64,
+      "baseline_ns": 240.039,
+      "pre_cache_ns": 232.665,
+      "final_ns": 239.395,
+      "final_min_ns": 206.161,
+      "final_max_ns": 294.705,
+      "baseline_change_percent": -0.2682897362511816,
+      "cache_change_percent": 2.8925708636881486,
+      "final_parses_per_second": 4177196.6833058335
+    },
+    {
+      "scenario": "dense",
+      "definitions": 64,
+      "baseline_ns": 5971.061,
+      "pre_cache_ns": 3416.565,
+      "final_ns": 3336.497,
+      "final_min_ns": 3119.228,
+      "final_max_ns": 3871.229,
+      "baseline_change_percent": -44.122208766582695,
+      "cache_change_percent": -2.3435233926472954,
+      "final_parses_per_second": 299715.539981004
+    },
+    {
+      "scenario": "sparse",
+      "definitions": 128,
+      "baseline_ns": 271.037,
+      "pre_cache_ns": 261.866,
+      "final_ns": 253.914,
+      "final_min_ns": 237.335,
+      "final_max_ns": 334.268,
+      "baseline_change_percent": -6.317587635636457,
+      "cache_change_percent": -3.036667608624255,
+      "final_parses_per_second": 3938341.3281662297
+    },
+    {
+      "scenario": "dense",
+      "definitions": 128,
+      "baseline_ns": 14673.128,
+      "pre_cache_ns": 7480.367,
+      "final_ns": 7381.649,
+      "final_min_ns": 6649.053,
+      "final_max_ns": 9463.38,
+      "baseline_change_percent": -49.69273763576519,
+      "cache_change_percent": -1.3196946085666683,
+      "final_parses_per_second": 135471.08511932768
+    },
+    {
+      "scenario": "sparse",
+      "definitions": 256,
+      "baseline_ns": 269.705,
+      "pre_cache_ns": 261.477,
+      "final_ns": 264.944,
+      "final_min_ns": 229.055,
+      "final_max_ns": 400.895,
+      "baseline_change_percent": -1.7652620455682944,
+      "cache_change_percent": 1.3259292404303347,
+      "final_parses_per_second": 3774382.511021197
+    },
+    {
+      "scenario": "dense",
+      "definitions": 256,
+      "baseline_ns": 31489.562,
+      "pre_cache_ns": 19159.014,
+      "final_ns": 21161.887,
+      "final_min_ns": 18425.076,
+      "final_max_ns": 32643.542,
+      "baseline_change_percent": -32.79713766739595,
+      "cache_change_percent": 10.453946116433755,
+      "final_parses_per_second": 47254.76513507515
+    },
+    {
+      "scenario": "short-cluster",
+      "definitions": 5,
+      "baseline_ns": 122.246,
+      "pre_cache_ns": 123.217,
+      "final_ns": 118.257,
+      "final_min_ns": 98.838,
+      "final_max_ns": 194.4,
+      "baseline_change_percent": -3.263092452922789,
+      "cache_change_percent": -4.0254185704894585,
+      "final_parses_per_second": 8456159.04343929
+    },
+    {
+      "scenario": "repeats",
+      "definitions": 5,
+      "baseline_ns": 270.08,
+      "pre_cache_ns": 265.693,
+      "final_ns": 293.417,
+      "final_min_ns": 256.903,
+      "final_max_ns": 455.252,
+      "baseline_change_percent": 8.64077310426541,
+      "cache_change_percent": 10.434599330806616,
+      "final_parses_per_second": 3408118.8206545636
+    },
+    {
+      "scenario": "mixed",
+      "definitions": 5,
+      "baseline_ns": 192.702,
+      "pre_cache_ns": 203.274,
+      "final_ns": 213.472,
+      "final_min_ns": 176.513,
+      "final_max_ns": 601.872,
+      "baseline_change_percent": 10.778300173324617,
+      "cache_change_percent": 5.01687377628226,
+      "final_parses_per_second": 4684455.1041822815
+    },
+    {
+      "scenario": "subcommands",
+      "definitions": 5,
+      "baseline_ns": 192.417,
+      "pre_cache_ns": 206.077,
+      "final_ns": 185.717,
+      "final_min_ns": 168.104,
+      "final_max_ns": 635.292,
+      "baseline_change_percent": -3.4820208193662716,
+      "cache_change_percent": -9.879802209853594,
+      "final_parses_per_second": 5384536.68754072
+    },
+    {
+      "scenario": "command-name-8",
+      "definitions": 4,
+      "baseline_ns": 176.407,
+      "pre_cache_ns": 174.857,
+      "final_ns": 189.569,
+      "final_min_ns": 162.5,
+      "final_max_ns": 305.499,
+      "baseline_change_percent": 7.4611551695794365,
+      "cache_change_percent": 8.413732364160431,
+      "final_parses_per_second": 5275124.097294389
+    },
+    {
+      "scenario": "command-name-32",
+      "definitions": 4,
+      "baseline_ns": 190.213,
+      "pre_cache_ns": 192.26,
+      "final_ns": 181.92,
+      "final_min_ns": 165.079,
+      "final_max_ns": 222.178,
+      "baseline_change_percent": -4.359849221662038,
+      "cache_change_percent": -5.378133777176741,
+      "final_parses_per_second": 5496921.723834653
+    },
+    {
+      "scenario": "command-name-128",
+      "definitions": 4,
+      "baseline_ns": 264.922,
+      "pre_cache_ns": 285.7,
+      "final_ns": 191.147,
+      "final_min_ns": 158.667,
+      "final_max_ns": 622.822,
+      "baseline_change_percent": -27.847819358150716,
+      "cache_change_percent": -33.09520476023802,
+      "final_parses_per_second": 5231575.698284566
+    }
+  ],
+  "definition_layouts": {
+    "v0_1_0-expanded": {
+      "command_bytes": 696,
+      "arg_bytes": 136,
+      "parser_bytes": 192
+    },
+    "v0_1_1-pre": {
+      "command_bytes": 440,
+      "arg_bytes": 160,
+      "parser_bytes": 192
+    },
+    "v0_1_1-final": {
+      "command_bytes": 440,
+      "arg_bytes": 160,
+      "parser_bytes": 192
+    }
+  },
+  "definition_footprints": [
+    {
+      "definitions": 4,
+      "baseline_bytes": 1240,
+      "final_bytes": 1080,
+      "change_bytes": -160
+    },
+    {
+      "definitions": 8,
+      "baseline_bytes": 1784,
+      "final_bytes": 1720,
+      "change_bytes": -64
+    },
+    {
+      "definitions": 16,
+      "baseline_bytes": 2872,
+      "final_bytes": 3000,
+      "change_bytes": 128
+    },
+    {
+      "definitions": 32,
+      "baseline_bytes": 5048,
+      "final_bytes": 5560,
+      "change_bytes": 512
+    },
+    {
+      "definitions": 64,
+      "baseline_bytes": 9400,
+      "final_bytes": 10680,
+      "change_bytes": 1280
+    },
+    {
+      "definitions": 128,
+      "baseline_bytes": 18104,
+      "final_bytes": 20920,
+      "change_bytes": 2816
+    },
+    {
+      "definitions": 256,
+      "baseline_bytes": 35512,
+      "final_bytes": 41400,
+      "change_bytes": 5888
+    }
+  ],
+  "baseline_builds": [
+    {
+      "parser": "zclap",
+      "binary_bytes": 336496,
+      "min_compile_s": 4.363503775999561,
+      "median_compile_s": 4.424039810997783,
+      "max_compile_s": 4.990897503001179,
+      "compile_samples_s": [
+        4.424039810997783,
+        4.990897503001179,
+        4.363503775999561
+      ]
+    }
+  ],
+  "candidate_and_competitor_builds": [
+    {
+      "parser": "zclap",
+      "binary_bytes": 336560,
+      "min_compile_s": 4.839146151000023,
+      "median_compile_s": 4.902407548001065,
+      "max_compile_s": 5.52976641100031,
+      "compile_samples_s": [
+        4.839146151000023,
+        4.902407548001065,
+        5.52976641100031
+      ]
+    },
+    {
+      "parser": "clap",
+      "binary_bytes": 563072,
+      "min_compile_s": 12.653559422000399,
+      "median_compile_s": 13.072997153998585,
+      "max_compile_s": 16.59837744499964,
+      "compile_samples_s": [
+        16.59837744499964,
+        12.653559422000399,
+        13.072997153998585
+      ]
+    },
+    {
+      "parser": "lexopt",
+      "binary_bytes": 338968,
+      "min_compile_s": 4.543615101996693,
+      "median_compile_s": 4.654765362996841,
+      "max_compile_s": 4.702851816000475,
+      "compile_samples_s": [
+        4.654765362996841,
+        4.543615101996693,
+        4.702851816000475
+      ]
+    },
+    {
+      "parser": "pico-args",
+      "binary_bytes": 335816,
+      "min_compile_s": 4.714163008997275,
+      "median_compile_s": 4.726319473000331,
+      "max_compile_s": 4.876436326998373,
+      "compile_samples_s": [
+        4.714163008997275,
+        4.876436326998373,
+        4.726319473000331
+      ]
+    },
+    {
+      "parser": "clap_lex",
+      "binary_bytes": 328768,
+      "min_compile_s": 4.26897653999913,
+      "median_compile_s": 4.588897311001347,
+      "max_compile_s": 4.644614314998762,
+      "compile_samples_s": [
+        4.26897653999913,
+        4.644614314998762,
+        4.588897311001347
+      ]
+    }
+  ],
+  "build_sources": [
+    "v0_1_0-builds.json",
+    "v0_1_1-builds.json"
+  ]
+}

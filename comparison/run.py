@@ -20,6 +20,7 @@ import tomllib
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 TARGET = Path(os.environ.setdefault("CARGO_TARGET_DIR", str(Path(tempfile.gettempdir()) / "zclap-comparison-target")))
+os.environ.setdefault("CARGO_BUILD_JOBS", "1")
 BINS = {
     "zclap": ("with-zclap", "size-zclap"),
     "clap": ("with-clap", "size-clap"),
@@ -64,6 +65,7 @@ def metadata(cpu):
         "cpu": cpu_name,
         "pinned_cpu": cpu,
         "build_target_directory": str(TARGET),
+        "build_jobs": os.environ["CARGO_BUILD_JOBS"],
         "profile": {"opt_level": 3, "lto": "thin", "codegen_units": 1, "strip": True},
         "rustflags": os.environ.get("RUSTFLAGS", ""),
         "packages": {p["name"]: p["version"] for p in tomllib.loads((HERE / "Cargo.lock").read_text())["package"]},
@@ -72,19 +74,63 @@ def metadata(cpu):
             "Timing builds have no counting allocator. Allocation builds count alloc, alloc_zeroed and realloc calls separately from timing.",
             "Definitions are prepared once outside the timed loop. Every parse includes input ownership required by each API, semantic validation, result reading and drop.",
             "Build timings start with an empty target directory and use a warm local registry cache; network download time is excluded.",
+            "The extended grammars use five leaf definitions: verbose, quiet, port, tag and a positional input; subcommands add two command levels.",
+            "Repeated-flag inputs contain four occurrences, inside clap's u8 counter range. Inputs use UTF-8, allowed tag values, and no escaped option-looking positional values.",
+            "Command-name cases vary only the command metadata name length (8/32/128 bytes); they share the same four-argument dense input.",
         ],
     }
+
+
+def prepare(label, cpu):
+    """Capture both executables before timing, so compilation can finish first."""
+    captured = TARGET / "captured"
+    captured.mkdir(parents=True, exist_ok=True)
+    report = {"metadata": metadata(cpu)}
+    suffix = ".exe" if os.name == "nt" else ""
+    executable = TARGET / "release" / ("benchmark" + suffix)
+    for mode, features in [("timing", []), ("allocations", ["--features", "allocation-counting"])]:
+        command(["cargo", "build", "--locked", "--release", "--bin", "benchmark", *features])
+        command([str(executable), "--check"], cpu=cpu)
+        destination = captured / f"{label}-{mode}{suffix}"
+        shutil.copy2(executable, destination)
+        report[mode + "_executable"] = {
+            "path": str(destination),
+            "sha256": hashlib.sha256(destination.read_bytes()).hexdigest(),
+        }
+        if mode == "timing":
+            report["layouts"] = json.loads(command([str(destination), "--layout"]))
+    current = metadata(cpu)["source_sha256"]
+    if current != report["metadata"]["source_sha256"]:
+        raise RuntimeError("Source changed during executable capture; rerun after edits finish")
+    report["definition_footprint"] = [
+        {"definitions": count,
+         "shallow_bytes": report["layouts"]["command_bytes"] + count * report["layouts"]["arg_bytes"]}
+        for count in [4, 8, 16, 32, 64, 128, 256]
+    ]
+    return report
+
+
+def captured_command(report, mode, rounds, millis, cpu):
+    item = report[mode + "_executable"]
+    path = Path(item["path"])
+    if hashlib.sha256(path.read_bytes()).hexdigest() != item["sha256"]:
+        raise RuntimeError(f"Captured {mode} executable changed: {path}")
+    return command([str(path), str(rounds), str(millis)], cpu=cpu)
 
 
 def summarize(csv_text):
     grouped = {}
     for row in csv.DictReader(io.StringIO(csv_text)):
         key = (row["scenario"], int(row["options"]), row["parser"])
-        grouped.setdefault(key, []).append({
+        sample = {
             "round": int(row["round"]), "iterations": int(row["iterations"]),
             "ns_per_parse": float(row["ns_per_parse"]),
             "parses_per_second": float(row["parses_per_second"]),
-        })
+        }
+        for field in ["pass", "pass_position"]:
+            if field in row:
+                sample[field] = int(row[field])
+        grouped.setdefault(key, []).append(sample)
     result = []
     for (scenario, options, parser), samples in grouped.items():
         values = [row["ns_per_parse"] for row in samples]
@@ -139,10 +185,21 @@ def markdown(report):
              "The JSON and CSV files contain every sample. A range is the observed minimum–maximum, not a confidence interval.", ""]
     timing = report.get("timing", [])
     allocations = {(r["scenario"], int(r["options"]), r["parser"]): r for r in report.get("allocations", [])}
-    for scenario in ["sparse", "dense"]:
+    titles = {
+        "sparse": "Sparse long options",
+        "dense": "Dense long options",
+        "short-cluster": "Short flag cluster",
+        "repeats": "Repeated flags and values",
+        "mixed": "Mixed short and long syntax",
+        "subcommands": "Nested subcommands",
+        "command-name-8": "Eight-byte command name",
+        "command-name-32": "32-byte command name",
+        "command-name-128": "128-byte command name",
+    }
+    for scenario in dict.fromkeys(row["scenario"] for row in timing):
         if not timing:
             break
-        lines += [f"## {scenario.capitalize()} long options", "",
+        lines += [f"## {titles.get(scenario, scenario)}", "",
                   "| Definitions | Parser | Median ns/parse ↓ | Min–max ns | Parses/s ↑ | Allocations/parse ↓ |", 
                   "|---:|---|---:|---:|---:|---:|"]
         for row in sorted((r for r in timing if r["scenario"] == scenario),
@@ -150,6 +207,17 @@ def markdown(report):
             alloc = allocations.get((scenario, row["options"], row["parser"]), {}).get("allocations", "—")
             lines.append(f"| {row['options']} | {row['parser']} | {row['median_ns']:.1f} | "
                          f"{row['min_ns']:.1f}–{row['max_ns']:.1f} | {row['median_parses_per_second']:,.0f} | {alloc} |")
+        lines.append("")
+    if report.get("layouts"):
+        lines += ["## Definition layout", "",
+                  f"`Command`: {report['layouts']['command_bytes']} bytes. "
+                  f"`Arg`: {report['layouts']['arg_bytes']} bytes. "
+                  f"Default `Parser`: {report['layouts']['parser_bytes']} bytes.", "",
+                  "The following shallow footprint is `size_of::<Command>() + n * size_of::<Arg>()`. "
+                  "It excludes borrowed name/help strings and external alias/rule slices; it describes this compiler and target.", "",
+                  "| Argument definitions | Shallow definition bytes |", "|---:|---:|"]
+        for row in report["definition_footprint"]:
+            lines.append(f"| {row['definitions']} | {row['shallow_bytes']} |")
         lines.append("")
     if report.get("builds"):
         lines += ["## Minimal executable and clean compilation", "",
@@ -161,8 +229,8 @@ def markdown(report):
                          f"{row['min_compile_s']:.3f}–{row['max_compile_s']:.3f} |")
         lines.append("")
     lines += ["## Scope", "", *[f"- {note}" for note in report["metadata"]["notes"]], "",
-              "The timed workloads use valid UTF-8 long options. They do not measure help rendering, error formatting, short clusters, subcommands, or operating-system process startup.",
-              "Small-parser adapters perform the semantic checks absent from their lexer APIs. The harness rejects unknown, repeated, missing, and invalid numeric values before collecting samples.", ""]
+              "The timed workloads use valid UTF-8 long options, short flag clusters, bounded repeated flags, repeated enum values, mixed syntax and nested subcommands. Help rendering, error formatting, operating-system process startup, non-UTF-8 values and escaped option-looking positional values are outside this common grammar.",
+              "Small-parser adapters perform the semantic checks absent from their lexer APIs. The harness rejects unknown arguments, forbidden repetitions, missing required arguments, invalid integers, invalid tag choices and invalid subcommands before collecting samples.", ""]
     return "\n".join(lines)
 
 
@@ -174,6 +242,8 @@ def main():
     cli.add_argument("--compile-rounds", type=int, default=3)
     cli.add_argument("--skip-build-metrics", action="store_true")
     cli.add_argument("--metrics-only", action="store_true")
+    cli.add_argument("--prepare-only", action="store_true")
+    cli.add_argument("--prepared", type=Path, help="capture JSON produced by --prepare-only")
     cli.add_argument("--cpu", type=int)
     cli.add_argument("--build-parsers", nargs="+", choices=list(BINS), default=list(BINS))
     args = cli.parse_args()
@@ -189,17 +259,29 @@ def main():
     results = HERE / "results"
     results.mkdir(exist_ok=True)
     command(["cargo", "fetch", "--locked"])
-    report = {"metadata": metadata(cpu), "parameters": vars(args)}
+    if args.prepare_only and (args.prepared or args.metrics_only):
+        cli.error("--prepare-only cannot be combined with --prepared or --metrics-only")
+    if args.prepared:
+        report = json.loads(args.prepared.read_text())
+    elif args.metrics_only:
+        report = {"metadata": metadata(cpu)}
+    else:
+        print("Building and checking both benchmark executables…", flush=True)
+        report = prepare(args.label, cpu)
+    report["parameters"] = {key: str(value) if isinstance(value, Path) else value for key, value in vars(args).items()}
+    if args.prepare_only:
+        path = results / f"{args.label}-capture.json"
+        path.write_text(json.dumps(report, indent=2) + "\n")
+        print(path, flush=True)
+        return
     if not args.metrics_only:
-        command(["cargo", "build", "--locked", "--release", "--bin", "benchmark"])
-        executable = TARGET / "release" / ("benchmark.exe" if os.name == "nt" else "benchmark")
         print("Measuring parse latency without allocation instrumentation…", flush=True)
-        raw = command([str(executable), str(args.rounds), str(args.millis)], cpu=cpu)
+        report["measurement_started_utc"] = dt.datetime.now(dt.timezone.utc).isoformat()
+        raw = captured_command(report, "timing", args.rounds, args.millis, cpu)
         (results / f"{args.label}-timings.csv").write_text(raw)
         report["timing"] = summarize(raw)
-        command(["cargo", "build", "--locked", "--release", "--features", "allocation-counting", "--bin", "benchmark"])
         print("Counting allocations in a separate build…", flush=True)
-        raw = command([str(executable), str(args.rounds), str(args.millis)], cpu=cpu)
+        raw = captured_command(report, "allocations", args.rounds, args.millis, cpu)
         (results / f"{args.label}-allocations.csv").write_text(raw)
         report["allocations"] = list(csv.DictReader(io.StringIO(raw)))
     if not args.skip_build_metrics:

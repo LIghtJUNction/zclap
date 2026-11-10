@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-11-10T02:56:41.704589+00:00",
+    "git_commit": "32df66134af7173db24d89cff6df4c44e9e3e5de",
+    "git_dirty": true,
+    "source_sha256": {
+      "Cargo.toml": "0b02aefb75d1e3b70725651be4d2986fac5cf27baf34883fec8e1cca6156daf4",
+      "comparison/Cargo.lock": "0859a379931ccda9ba14d78bcb108caf9f603e6a183637e5b306e75a0ba245b0",
+      "comparison/Cargo.toml": "0cf9ebb710993c6bb874abf5c45e59bfc0503cd2dc7ff62eda309af3e389a971",
+      "comparison/src/bin/size_clap.rs": "7009dcd070d16b1b015e56be22824f57da31555d4e68383d7489384657847c0c",
+      "comparison/src/bin/size_clap_lex.rs": "6482df0f02e5f1f243ac27bb4ce31243c3811f0fcc0863601340bd6697616f25",
+      "comparison/src/bin/size_lexopt.rs": "c30d4310afc2953d67d57e898f49488f5df6e55767c1820c6485dd36c45febda",
+      "comparison/src/bin/size_pico_args.rs": "6d645cae2f9a28cc4addde6e1064cdf7ed6a075a94adbc277c6f42fc4813da2b",
+      "comparison/src/bin/size_zclap.rs": "dacba12a87149c64fe1718a243f514f86c0a98163c289d262dd87c0bfc11c33d",
+      "comparison/src/lib.rs": "f7c0387f9eec83e660d8255cc3cdd08f942f43a3039e10e2fd5bf59abc8581db",
+      "comparison/src/main.rs": "ef0e3a54d0e30e7c0345949714fa4ab6e8c9f80e06805a56e1be583fc02ffb5c",
+      "comparison/src/scenarios.rs": "fc95f35bdb24f597d6c1b18d122d15f308ff18d6a6fce8b201a498e8b792eeac",
+      "src/input.rs": "67d2b6e28db684ce562ab9da1593157e01028b1f48c7dffa99eaa5609fc2815e",
+      "src/lib.rs": "309e398e7709f3d7df48108f8022983295674a838e6d4e74a9f8815df5a86a7a",
+      "src/style.rs": "cbbb682010ad36b3b3eb7ae455ef0530efdb1b0d27eeae8487b2200c5785fbf6"
+    },
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.1\nLLVM version: 23.1.1",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "os": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "pinned_cpu": 7,
+    "build_target_directory": "/tmp/zclap-comparison-target",
+    "build_jobs": "1",
+    "profile": {
+      "opt_level": 3,
+      "lto": "thin",
+      "codegen_units": 1,
+      "strip": true
+    },
+    "rustflags": "",
+    "packages": {
+      "anstyle": "1.0.14",
+      "clap": "4.6.7",
+      "clap_builder": "4.6.7",
+      "clap_lex": "1.1.1",
+      "lexopt": "0.3.2",
+      "pico-args": "0.5.0",
+      "zclap": "0.1.0",
+      "zclap-comparison": "0.0.0"
+    },
+    "notes": [
+      "Shared cloud host; CPU affinity is used where supported; turbo and neighboring workloads are not controlled.",
+      "Timing builds have no counting allocator. Allocation builds count alloc, alloc_zeroed and realloc calls separately from timing.",
+      "Definitions are prepared once outside the timed loop. Every parse includes input ownership required by each API, semantic validation, result reading and drop.",
+      "Build timings start with an empty target directory and use a warm local registry cache; network download time is excluded.",
+      "The extended grammars use five leaf definitions: verbose, quiet, port, tag and a positional input; subcommands add two command levels.",
+      "Repeated-flag inputs contain four occurrences, inside clap's u8 counter range. Inputs use UTF-8, allowed tag values, and no escaped option-looking positional values.",
+      "Command-name cases vary only the command metadata name length (8/32/128 bytes); they share the same four-argument dense input."
+    ]
+  },
+  "timing_executable": {
+    "path": "/tmp/zclap-comparison-target/captured/v0_1_0-expanded-timing",
+    "sha256": "e796b65f768332c6f83a43026e51b7b3f61f8094998ff68f02c6d25bc9a55f3c"
+  },
+  "layouts": {
+    "command_bytes": 696,
+    "arg_bytes": 136,
+    "parser_bytes": 192
+  },
+  "allocations_executable": {
+    "path": "/tmp/zclap-comparison-target/captured/v0_1_0-expanded-allocations",
+    "sha256": "a517f1aa191cd2d8ca8f5139c6055d2501ac45339ff3848888c451ae1d976cd0"
+  },
+  "definition_footprint": [
+    {
+      "definitions": 4,
+      "shallow_bytes": 1240
+    },
+    {
+      "definitions": 8,
+      "shallow_bytes": 1784
+    },
+    {
+      "definitions": 16,
+      "shallow_bytes": 2872
+    },
+    {
+      "definitions": 32,
+      "shallow_bytes": 5048
+    },
+    {
+      "definitions": 64,
+      "shallow_bytes": 9400
+    },
+    {
+      "definitions": 128,
+      "shallow_bytes": 18104
+    },
+    {
+      "definitions": 256,
+      "shallow_bytes": 35512
+    }
+  ],
+  "parameters": {
+    "label": "v0_1_0-expanded",
+    "rounds": 7,
+    "millis": 40,
+    "compile_rounds": 3,
+    "skip_build_metrics": false,
+    "metrics_only": false,
+    "prepare_only": true,
+    "prepared": null,
+    "cpu": 7,
+    "build_parsers": [
+      "zclap",
+      "clap",
+      "lexopt",
+      "pico-args",
+      "clap_lex"
+    ]
+  }
+}

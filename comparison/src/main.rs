@@ -5,6 +5,8 @@ use std::hint::black_box;
 use std::time::{Duration, Instant};
 use zclap_comparison::{contribution, contribution_number, name_index, Output};
 
+mod scenarios;
+
 #[cfg(feature = "allocation-counting")]
 mod allocations {
     use std::alloc::{GlobalAlloc, Layout, System};
@@ -64,6 +66,10 @@ struct Fixture {
 
 impl Fixture {
     fn new(count: usize) -> Self {
+        Self::named(count, "bench")
+    }
+
+    fn named(count: usize, command_name: &'static str) -> Self {
         let names: Vec<&'static str> = (0..count)
             .map(|i| &*Box::leak(format!("opt{i:03}").into_boxed_str()))
             .collect();
@@ -92,8 +98,8 @@ impl Fixture {
                 }
             })
             .collect();
-        let zclap = zclap::Command::new("bench").args(Box::leak(args.into_boxed_slice()));
-        let mut clap = clap::Command::new("bench")
+        let zclap = zclap::Command::new(command_name).args(Box::leak(args.into_boxed_slice()));
+        let mut clap = clap::Command::new(command_name)
             .no_binary_name(true)
             .disable_help_flag(true)
             .disable_version_flag(true);
@@ -291,76 +297,134 @@ fn verify(fixture: &mut Fixture, input: &[&str]) -> u64 {
 }
 
 #[cfg(not(feature = "allocation-counting"))]
-fn measure(fixture: &mut Fixture, engine: usize, input: &[&str], iterations: usize) -> f64 {
+fn measure(mut run: impl FnMut() -> ParseResult, iterations: usize) -> f64 {
     let start = Instant::now();
     for _ in 0..iterations {
-        black_box(fixture.run(black_box(engine), black_box(input)).unwrap());
+        black_box(run().unwrap());
     }
     start.elapsed().as_nanos() as f64 / iterations as f64
 }
 
+fn record(
+    scenario: &str,
+    count: usize,
+    rounds: usize,
+    millis: u64,
+    mut run: impl FnMut(usize) -> ParseResult,
+) {
+    #[cfg(not(feature = "allocation-counting"))]
+    {
+        let mut iterations = [1usize; 5];
+        for (engine, item) in iterations.iter_mut().enumerate() {
+            // Warm parser caches and calibrate a duration per parser.
+            let mut batch = 32usize;
+            loop {
+                let elapsed = measure(|| run(engine), batch) * batch as f64;
+                if elapsed >= Duration::from_millis(3).as_nanos() as f64 || batch >= 1 << 22 {
+                    *item =
+                        ((millis as f64 * 1_000_000.0 / elapsed) * batch as f64).max(32.0) as usize;
+                    break;
+                }
+                batch *= 2;
+            }
+        }
+        for round in 0..rounds {
+            for shift in 0..ENGINES.len() {
+                let engine = (shift + round) % ENGINES.len();
+                let ns = measure(|| run(engine), iterations[engine]);
+                println!(
+                    "{scenario},{count},{},{round},{},{ns:.3},{:.3}",
+                    ENGINES[engine],
+                    iterations[engine],
+                    1e9 / ns
+                );
+            }
+        }
+    }
+    #[cfg(feature = "allocation-counting")]
+    {
+        use std::sync::atomic::Ordering;
+        let _ = (rounds, millis);
+        for (engine, name) in ENGINES.iter().enumerate() {
+            black_box(run(engine).unwrap());
+            allocations::CALLS.store(0, Ordering::Relaxed);
+            allocations::BYTES.store(0, Ordering::Relaxed);
+            allocations::ENABLED.store(true, Ordering::Relaxed);
+            black_box(run(engine).unwrap());
+            allocations::ENABLED.store(false, Ordering::Relaxed);
+            let calls = allocations::CALLS.load(Ordering::Relaxed);
+            let bytes = allocations::BYTES.load(Ordering::Relaxed);
+            println!("{scenario},{count},{name},{calls},{bytes}");
+        }
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    let rounds: usize = args.get(1).map_or(7, |v| v.parse().expect("round count"));
+    if args.get(1).is_some_and(|v| v == "--layout") {
+        println!(
+            "{{\"command_bytes\":{},\"arg_bytes\":{},\"parser_bytes\":{}}}",
+            std::mem::size_of::<zclap::Command>(),
+            std::mem::size_of::<zclap::Arg>(),
+            std::mem::size_of::<zclap::Parser>(),
+        );
+        return;
+    }
+    let checks_only = args.get(1).is_some_and(|v| v == "--check");
+    let rounds: usize = if checks_only {
+        3
+    } else {
+        args.get(1).map_or(7, |v| v.parse().expect("round count"))
+    };
     let millis: u64 = args
         .get(2)
         .map_or(40, |v| v.parse().expect("milliseconds per sample"));
     assert!(rounds >= 3 && millis > 0);
-    #[cfg(not(feature = "allocation-counting"))]
-    println!("scenario,options,parser,round,iterations,ns_per_parse,parses_per_second");
-    #[cfg(feature = "allocation-counting")]
-    println!("scenario,options,parser,allocations,allocated_bytes");
+    if !checks_only {
+        #[cfg(not(feature = "allocation-counting"))]
+        println!("scenario,options,parser,round,iterations,ns_per_parse,parses_per_second");
+        #[cfg(feature = "allocation-counting")]
+        println!("scenario,options,parser,allocations,allocated_bytes");
+    }
     for count in SIZES {
         let mut fixture = Fixture::new(count);
         for (scenario, dense) in [("sparse", false), ("dense", true)] {
             let owned = fixture.input(dense);
             let input: Vec<_> = owned.iter().map(String::as_str).collect();
             black_box(verify(&mut fixture, &input));
-            #[cfg(not(feature = "allocation-counting"))]
-            {
-                let mut iterations = [1usize; 5];
-                for (engine, item) in iterations.iter_mut().enumerate() {
-                    // Warm parser caches and calibrate a duration per parser.
-                    let mut batch = 32usize;
-                    loop {
-                        let elapsed = measure(&mut fixture, engine, &input, batch) * batch as f64;
-                        if elapsed >= Duration::from_millis(3).as_nanos() as f64 || batch >= 1 << 22
-                        {
-                            *item = ((millis as f64 * 1_000_000.0 / elapsed) * batch as f64)
-                                .max(32.0) as usize;
-                            break;
-                        }
-                        batch *= 2;
-                    }
-                }
-                for round in 0..rounds {
-                    for shift in 0..ENGINES.len() {
-                        let engine = (shift + round) % ENGINES.len();
-                        let ns = measure(&mut fixture, engine, &input, iterations[engine]);
-                        println!(
-                            "{scenario},{count},{},{round},{},{ns:.3},{:.3}",
-                            ENGINES[engine],
-                            iterations[engine],
-                            1e9 / ns
-                        );
-                    }
-                }
-            }
-            #[cfg(feature = "allocation-counting")]
-            {
-                use std::sync::atomic::Ordering;
-                for (engine, name) in ENGINES.iter().enumerate() {
-                    black_box(fixture.run(engine, &input).unwrap());
-                    allocations::CALLS.store(0, Ordering::Relaxed);
-                    allocations::BYTES.store(0, Ordering::Relaxed);
-                    allocations::ENABLED.store(true, Ordering::Relaxed);
-                    black_box(fixture.run(black_box(engine), black_box(&input)).unwrap());
-                    allocations::ENABLED.store(false, Ordering::Relaxed);
-                    let calls = allocations::CALLS.load(Ordering::Relaxed);
-                    let bytes = allocations::BYTES.load(Ordering::Relaxed);
-                    println!("{scenario},{count},{name},{calls},{bytes}");
-                }
+            if !checks_only {
+                record(scenario, count, rounds, millis, |engine| {
+                    fixture.run(black_box(engine), black_box(&input))
+                });
             }
         }
+    }
+    for (name, input, nested) in scenarios::CASES {
+        let mut fixture = scenarios::Fixture::new(nested);
+        fixture.verify(input);
+        if !checks_only {
+            record(name, 5, rounds, millis, |engine| {
+                fixture.run(black_box(engine), black_box(input))
+            });
+        }
+    }
+    for length in [8, 32, 128] {
+        let command_name = Box::leak("c".repeat(length).into_boxed_str());
+        let mut fixture = Fixture::named(4, command_name);
+        let owned = fixture.input(true);
+        let input: Vec<_> = owned.iter().map(String::as_str).collect();
+        black_box(verify(&mut fixture, &input));
+        if !checks_only {
+            record(
+                &format!("command-name-{length}"),
+                4,
+                rounds,
+                millis,
+                |engine| fixture.run(black_box(engine), black_box(&input)),
+            );
+        }
+    }
+    if checks_only {
+        println!("All shared-grammar checks passed.");
     }
 }

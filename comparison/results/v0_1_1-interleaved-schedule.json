@@ -1,0 +1,65 @@
+[
+  {
+    "pass": 0,
+    "position": 0,
+    "capture": "v0_1_0-expanded",
+    "started_utc": "2026-11-10T03:00:54.962835+00:00",
+    "finished_utc": "2026-11-10T03:01:19.630862+00:00"
+  },
+  {
+    "pass": 0,
+    "position": 1,
+    "capture": "v0_1_1-pre",
+    "started_utc": "2026-11-10T03:01:19.630950+00:00",
+    "finished_utc": "2026-11-10T03:01:43.776453+00:00"
+  },
+  {
+    "pass": 0,
+    "position": 2,
+    "capture": "v0_1_1-final",
+    "started_utc": "2026-11-10T03:01:43.776490+00:00",
+    "finished_utc": "2026-11-10T03:02:09.508793+00:00"
+  },
+  {
+    "pass": 1,
+    "position": 0,
+    "capture": "v0_1_1-pre",
+    "started_utc": "2026-11-10T03:02:09.508832+00:00",
+    "finished_utc": "2026-11-10T03:02:34.184094+00:00"
+  },
+  {
+    "pass": 1,
+    "position": 1,
+    "capture": "v0_1_1-final",
+    "started_utc": "2026-11-10T03:02:34.184126+00:00",
+    "finished_utc": "2026-11-10T03:03:00.762378+00:00"
+  },
+  {
+    "pass": 1,
+    "position": 2,
+    "capture": "v0_1_0-expanded",
+    "started_utc": "2026-11-10T03:03:00.762412+00:00",
+    "finished_utc": "2026-11-10T03:03:26.437951+00:00"
+  },
+  {
+    "pass": 2,
+    "position": 0,
+    "capture": "v0_1_1-final",
+    "started_utc": "2026-11-10T03:03:26.437992+00:00",
+    "finished_utc": "2026-11-10T03:03:50.868429+00:00"
+  },
+  {
+    "pass": 2,
+    "position": 1,
+    "capture": "v0_1_0-expanded",
+    "started_utc": "2026-11-10T03:03:50.868476+00:00",
+    "finished_utc": "2026-11-10T03:04:15.197727+00:00"
+  },
+  {
+    "pass": 2,
+    "position": 2,
+    "capture": "v0_1_1-pre",
+    "started_utc": "2026-11-10T03:04:15.197770+00:00",
+    "finished_utc": "2026-11-10T03:04:39.287507+00:00"
+  }
+]
