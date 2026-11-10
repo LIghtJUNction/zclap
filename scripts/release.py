@@ -84,7 +84,7 @@ def request_settings(path):
 
 
 def run(*args, capture=True, check=True):
-    result = subprocess.run(args, check=False, text=True,
+    result = subprocess.run(args, check=False, text=True, encoding="utf-8",
                             stdout=subprocess.PIPE if capture else None)
     if check:
         require(result.returncode == 0, f"command failed ({result.returncode}): {' '.join(args)}")
@@ -96,38 +96,38 @@ def git(*args):
 
 
 def package_version(ref=None):
-    content = git("show", f"{ref}:Cargo.toml") if ref else Path("Cargo.toml").read_text()
+    content = git("show", f"{ref}:Cargo.toml") if ref else Path("Cargo.toml").read_text(encoding="utf-8")
     return tomllib.loads(content)["package"]["version"]
 
 
 def set_version(version):
     semver(version)
     old = package_version()
-    text = Path("Cargo.toml").read_text()
+    text = Path("Cargo.toml").read_text(encoding="utf-8")
     section = re.search(r"(?ms)^\[package\]\s*\n(.*?)(?=^\[|\Z)", text)
     require(section is not None, "Cargo.toml lacks a [package] section")
     body, count = re.subn(r'(?m)^version\s*=\s*"[^"]+"', f'version = "{version}"', section[1])
     require(count == 1, "expected one literal package.version in Cargo.toml")
-    Path("Cargo.toml").write_text(text[:section.start(1)] + body + text[section.end(1):])
+    Path("Cargo.toml").write_text(text[:section.start(1)] + body + text[section.end(1):], encoding="utf-8")
     for name in ("Cargo.lock", "comparison/Cargo.lock"):
         path = Path(name)
         if not path.exists():
             continue
-        text = path.read_text()
+        text = path.read_text(encoding="utf-8")
         blocks = text.split("[[package]]")
         for index in range(1, len(blocks)):
             if re.search(r'(?m)^name = "zclap"$', blocks[index]):
                 blocks[index], count = re.subn(r'(?m)^version = "[^"]+"$',
                                                f'version = "{version}"', blocks[index], count=1)
                 require(count == 1, f"missing zclap version in {name}")
-        path.write_text("[[package]]".join(blocks))
+        path.write_text("[[package]]".join(blocks), encoding="utf-8")
     readme = Path("README.md")
     if readme.exists():
-        text = readme.read_text()
+        text = readme.read_text(encoding="utf-8")
         # Update installation snippets only; historical benchmark versions stay intact.
         text = re.sub(r'(?m)(^zclap\s*=\s*(?:\{\s*version\s*=\s*)?")' +
                       re.escape(old) + r'(")', lambda m: m[1] + version + m[2], text)
-        readme.write_text(text)
+        readme.write_text(text, encoding="utf-8")
 
 
 def api_version(version):
@@ -165,7 +165,7 @@ def require_token():
 def write_output(data):
     print(json.dumps(data, indent=2))
     if path := os.environ.get("GITHUB_OUTPUT"):
-        with open(path, "a") as output:
+        with open(path, "a", encoding="utf-8") as output:
             for key, value in data.items():
                 output.write(f"{key}={value}\n")
 
@@ -204,9 +204,9 @@ def plan(kind, requested):
 def state(**values):
     path = Path("target/release-state.json")
     path.parent.mkdir(exist_ok=True)
-    data = json.loads(path.read_text()) if path.exists() else {}
+    data = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
     data.update(values)
-    path.write_text(json.dumps(data, indent=2) + "\n")
+    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 
 
 def verify_registry(version, checksum, attempts=1):
@@ -290,7 +290,7 @@ def publish(source, version, kind):
                          f"- Crate: https://crates.io/crates/zclap/{version}\n"
                          f"- Validated commit: {commit}\n"
                          f"- Package SHA-256: `{checksum}`\n"
-                         "- Linux, macOS, Windows, MSRV, no_std and zero-dependency checks passed.\n")
+                         "- Linux, macOS, Windows, MSRV, no_std and zero-dependency checks passed.\n", encoding="utf-8")
         prerelease = [] if semver(version)[3] else ["--prerelease", "--latest=false"]
         run("gh", "release", "create", tag, "--repo", repo, "--verify-tag",
             "--title", f"zclap {version}", "--notes-file", str(notes), *prerelease, capture=False)
@@ -299,7 +299,7 @@ def publish(source, version, kind):
     state(stage="complete", release_url=url)
     print(f"Verified zclap {version}: {url}; crates.io SHA-256 {checksum}")
     if path := os.environ.get("GITHUB_STEP_SUMMARY"):
-        with open(path, "a") as output:
+        with open(path, "a", encoding="utf-8") as output:
             output.write(f"## zclap {version}\n\n[GitHub Release]({url}) · "
                          f"[crates.io](https://crates.io/crates/zclap/{version})\n\n"
                          f"Commit: `{commit}`\n\nSHA-256: `{checksum}`\n")

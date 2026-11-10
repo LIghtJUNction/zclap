@@ -80,6 +80,24 @@ class VersionTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "secrets.CARGO_REGISTRY_TOKEN"):
                 release.require_token()
 
+    def test_version_edit_uses_utf8_under_a_non_utf8_locale(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            manifest = '[package]\nname = "zclap"\nversion = "0.1.0"\ndescription = "名前"\n'
+            readme = '# 名前\n\nzclap = "0.1.0"\n'
+            (root / "Cargo.toml").write_text(manifest, encoding="utf-8")
+            (root / "README.md").write_text(readme, encoding="utf-8")
+            env = dict(os.environ, LC_ALL="C", LANG="C", PYTHONUTF8="0", PYTHONCOERCECLOCALE="0")
+            result = subprocess.run([
+                sys.executable, "-X", "utf8=0", str(Path(release.__file__).resolve()),
+                "set-version", "0.1.1",
+            ], cwd=root, env=env, capture_output=True)
+            self.assertEqual(result.returncode, 0, (result.stdout, result.stderr))
+            self.assertEqual((root / "Cargo.toml").read_text(encoding="utf-8"),
+                             manifest.replace("0.1.0", "0.1.1"))
+            self.assertEqual((root / "README.md").read_text(encoding="utf-8"),
+                             readme.replace("0.1.0", "0.1.1"))
+
     def test_request_schema_accepts_supported_modes(self):
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "request.json"
@@ -268,6 +286,33 @@ class TransactionTests(unittest.TestCase):
         self.assertEqual(self.uploads, 1)
         self.assertTrue(self.has_release)
         self.assertEqual(json.loads(Path("target/release-state.json").read_text())["stage"], "complete")
+
+    def test_manual_patch_after_initial_release_preserves_the_previous_tag(self):
+        release.publish(self.source, "0.1.0", "current")
+        previous_tag = release.git("rev-parse", "v0.1.0")
+        previous_package = self.registry
+        self.registry = None
+        self.has_release = False
+        Path("README.md").write_text('zclap = "0.1.0"\n\nUpdated behavior.\n')
+        release.git("commit", "-am", "improve parser")
+        release.git("push", "origin", "main")
+        source = release.git("rev-parse", "HEAD")
+        with patch.dict(os.environ, {"GITHUB_RUN_ID": "124"}), \
+                patch.object(release, "api_version", side_effect=lambda version:
+                             previous_package if version == "0.1.0" else self.registry):
+            with patch.object(release, "write_output") as output:
+                release.plan("manual", "0.1.1")
+            output.assert_called_once_with({"version": "0.1.1", "source": source,
+                                           "tag": "v0.1.1", "kind": "manual"})
+            release.publish(source, "0.1.1", "manual")
+        self.assertEqual(release.git("rev-parse", "v0.1.0"), previous_tag)
+        self.assertEqual(release.git("rev-parse", "v0.1.1^"), source)
+        self.assertIn(f"Source-Commit: {source}", release.tag_message("v0.1.1"))
+        self.assertEqual(release.package_version(), "0.1.1")
+        self.assertIn('version = "0.1.1"', Path("Cargo.lock").read_text())
+        self.assertEqual(Path("README.md").read_text(),
+                         'zclap = "0.1.1"\n\nUpdated behavior.\n')
+        self.assertEqual(self.uploads, 2)
 
     def test_resume_after_registry_success_does_not_publish_twice(self):
         self.fail_release = True
