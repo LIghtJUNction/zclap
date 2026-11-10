@@ -457,6 +457,45 @@ fn definition_errors_are_structured() {
 }
 
 #[test]
+fn command_name_validation_survives_every_builder_order() {
+    let args = [Arg::flag("flag")];
+    let children = [Command::new("child")];
+    let input: [&str; 0] = [];
+    for name in ["", "-bad", "with space", "name=value", "\x7f"] {
+        for command in [
+            Command::new(name),
+            Command::new(name).about("description"),
+            Command::new(name).args(&args),
+            Command::new(name).subcommands(&children),
+            Command::new(name).args(&args).subcommands(&children),
+            Command::new(name).subcommands(&children).args(&args),
+        ] {
+            let expected = Error::Definition {
+                arg: name,
+                reason: "invalid command name",
+            };
+            assert_eq!(command.check(), Err(expected));
+            let mut parser = command.parse(&input);
+            assert_eq!(parser.next(), Err(expected));
+            assert_eq!(parser.finish(), Err(expected));
+            assert_eq!(parser.next(), Err(expected));
+        }
+    }
+
+    const INVALID: Command = Command::new("");
+    assert!(matches!(
+        INVALID.parse(&input).finish(),
+        Err(Error::Definition { .. })
+    ));
+    const VALID: Command = Command::new("工具");
+    for _ in 0..2 {
+        let mut parser = VALID.parse(&input);
+        assert_eq!(parser.next(), Ok(None));
+        assert_eq!(parser.finish(), Ok(()));
+    }
+}
+
+#[test]
 fn large_definitions_and_custom_capacity() {
     let names: Vec<String> = (0..513).map(|i| format!("option{i}")).collect();
     let args: Vec<Arg> = names.iter().map(|s| Arg::flag(s)).collect();

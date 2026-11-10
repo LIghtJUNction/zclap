@@ -355,7 +355,11 @@ impl<'s> Command<'s> {
             about: "",
             args: &[],
             commands: &[],
-            definition_error: None,
+            definition_error: if valid_name(name) {
+                None
+            } else {
+                Some(definition(name, "invalid command name"))
+            },
             rules: false,
             has_alias: false,
             long_order: [0; 256],
@@ -958,9 +962,6 @@ impl<'s, 'a, T: input::Input, const WORDS: usize> Parser<'s, 'a, T, WORDS> {
             validated: false,
             error: command.definition_error,
         };
-        if !valid_name(command.name) {
-            parser.error = Some(definition(command.name, "invalid command name"));
-        }
         if command.args.len() > WORDS.saturating_mul(64) {
             parser.error = Some(Error::Capacity {
                 needed: command.args.len(),
