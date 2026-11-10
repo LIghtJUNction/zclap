@@ -227,3 +227,63 @@ fn empty_help_and_trait_object_sinks_work() {
     Style::plain().help(&command, sink).unwrap();
     assert_eq!(text.as_str(), "empty\n\nUsage: empty\n");
 }
+
+#[test]
+fn all_aliases_are_rendered_in_declaration_order_without_changing_alignment() {
+    const ALIASES: Command = Command::new("copy").args(&[
+        Arg::value("output")
+            .aliases(&["destination", "out", "書込"])
+            .help("Destination file"),
+        Arg::flag("verbose").help("Show progress"),
+    ]);
+    let mut plain = Fixed::<1024>::new();
+    Style::plain().help(&ALIASES, &mut plain).unwrap();
+    assert!(plain
+        .as_str()
+        .contains("--output (aliases: --destination, --out, --書込) <output>"));
+
+    let mut colored = String::new();
+    let mut style = Style::plain();
+    style.option = ("<option>", "</option>");
+    style.help(&ALIASES, &mut colored).unwrap();
+    assert!(colored.contains("<option> (aliases: --destination, --out, --書込)</option>"));
+    assert_eq!(
+        plain.as_str(),
+        colored.replace("<option>", "").replace("</option>", "")
+    );
+}
+
+#[test]
+fn a_single_alias_in_a_slice_preserves_the_existing_help_output() {
+    const SINGLE: Command = Command::new("demo").args(&[Arg::value("mode")
+        .short('m')
+        .alias("format")
+        .help("Choose a representation")]);
+    const SLICE: Command = Command::new("demo").args(&[Arg::value("mode")
+        .short('m')
+        .aliases(&["format"])
+        .help("Choose a representation")]);
+    let mut single = String::new();
+    let mut slice = String::new();
+    Style::plain().help(&SINGLE, &mut single).unwrap();
+    Style::plain().help(&SLICE, &mut slice).unwrap();
+    assert!(single.contains("-m, --mode (alias: --format) <mode>"));
+    assert_eq!(single, slice);
+}
+
+#[test]
+fn replacing_and_clearing_aliases_updates_help() {
+    const REPLACED: Command = Command::new("demo").args(&[
+        Arg::flag("first")
+            .aliases(&["stale", "old"])
+            .alias("current"),
+        Arg::flag("second").alias("removed").aliases(&[]),
+    ]);
+    let mut text = String::new();
+    Style::plain().help(&REPLACED, &mut text).unwrap();
+    assert!(text.contains("--first (alias: --current)"));
+    assert!(text.contains("--second"));
+    for removed in ["stale", "old", "removed"] {
+        assert!(!text.contains(removed));
+    }
+}

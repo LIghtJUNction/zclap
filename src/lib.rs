@@ -46,22 +46,83 @@ enum Kind {
     Positional,
 }
 
+// Keep the single-name builders const without allocating a one-element slice.
+// Slice-backed lists make plural configuration independent of a fixed capacity.
+#[derive(Clone, Copy, Debug)]
+enum Names<'s> {
+    One(&'s str),
+    Many(&'s [&'s str]),
+}
+
+impl<'s> Names<'s> {
+    const fn as_slice(&self) -> &[&'s str] {
+        match self {
+            Self::One(name) => core::slice::from_ref(name),
+            Self::Many(names) => names,
+        }
+    }
+
+    const fn first(&self) -> Option<&'s str> {
+        let names = self.as_slice();
+        if names.is_empty() {
+            None
+        } else {
+            Some(names[0])
+        }
+    }
+
+    const fn is_empty(&self) -> bool {
+        self.as_slice().is_empty()
+    }
+
+    const fn contains(&self, name: &str) -> bool {
+        let names = self.as_slice();
+        let mut i = 0;
+        while i < names.len() {
+            if eq(names[i], name) {
+                return true;
+            }
+            i += 1;
+        }
+        false
+    }
+
+    const fn contains_option(&self, name: Option<&str>) -> bool {
+        match name {
+            Some(name) => self.contains(name),
+            None => false,
+        }
+    }
+
+    const fn overlaps(&self, other: &Self) -> bool {
+        let names = self.as_slice();
+        let mut i = 0;
+        while i < names.len() {
+            if other.contains(names[i]) {
+                return true;
+            }
+            i += 1;
+        }
+        false
+    }
+}
+
 /// A borrowed, const-constructible argument definition.
 ///
 /// Named arguments have a long name equal to their ID unless `.long()` changes
-/// it. Each argument has at most one alias, conflict and dependency; a later
-/// call to the same builder replaces the earlier setting.
+/// it. Single-name and slice-based builders replace the corresponding setting:
+/// for example, `.aliases(&["a", "b"]).alias("c")` leaves only alias `c`.
 #[derive(Clone, Copy, Debug)]
 pub struct Arg<'s> {
     id: &'s str,
     kind: Kind,
     short: Option<char>,
     long: Option<&'s str>,
-    alias: Option<&'s str>,
+    alias: Names<'s>,
     help: &'s str,
     choices: &'s [&'s str],
-    conflict: Option<&'s str>,
-    require: Option<&'s str>,
+    conflict: Names<'s>,
+    require: Names<'s>,
     required: bool,
     repeat: bool,
     min: usize,
@@ -79,11 +140,11 @@ impl<'s> Arg<'s> {
             } else {
                 Some(id)
             },
-            alias: None,
+            alias: Names::Many(&[]),
             help: "",
             choices: &[],
-            conflict: None,
-            require: None,
+            conflict: Names::Many(&[]),
+            require: Names::Many(&[]),
             required: false,
             repeat: false,
             min: 1,
@@ -131,9 +192,32 @@ impl<'s> Arg<'s> {
         self.help = text;
         self
     }
-    /// Set one additional long name for the same argument.
+    /// Set one alternative long name, replacing any previously configured aliases.
     pub const fn alias(mut self, name: &'s str) -> Self {
-        self.alias = Some(name);
+        self.alias = Names::One(name);
+        self
+    }
+    /// Set alternative long names, replacing any previously configured aliases.
+    ///
+    /// Every spelling produces the same argument ID and shares presence state.
+    /// An empty slice removes aliases. Names must be unique across the command.
+    ///
+    /// ```
+    /// use zclap::{Arg, Command, Event};
+    /// const CLI: Command = Command::new("demo").args(&[
+    ///     Arg::flag("verbose").aliases(&["chatty", "debug"]).repeat(),
+    /// ]);
+    /// let argv = ["--chatty", "--debug"];
+    /// let mut parser = CLI.parse(&argv);
+    /// for _ in 0..2 {
+    ///     assert_eq!(parser.next()?, Some(Event::Flag { arg: "verbose" }));
+    /// }
+    /// assert_eq!(parser.next()?, None);
+    /// parser.finish()?;
+    /// # Ok::<(), zclap::Error<'static>>(())
+    /// ```
+    pub const fn aliases(mut self, names: &'s [&'s str]) -> Self {
+        self.alias = Names::Many(names);
         self
     }
     /// Restrict values to exact, case-sensitive UTF-8 strings. An empty list is unrestricted.
@@ -142,13 +226,27 @@ impl<'s> Arg<'s> {
         self
     }
     /// Reject this argument when the other argument ID is present, in either order.
+    /// Replaces any previously configured conflict targets.
     pub const fn conflicts(mut self, id: &'s str) -> Self {
-        self.conflict = Some(id);
+        self.conflict = Names::One(id);
+        self
+    }
+    /// Reject this argument when any listed argument ID is present, in either order.
+    /// Replaces all conflict targets; an empty slice removes this rule.
+    pub const fn conflicts_with(mut self, ids: &'s [&'s str]) -> Self {
+        self.conflict = Names::Many(ids);
         self
     }
     /// Require the other argument ID when this argument is present.
+    /// Replaces any previously configured dependency targets.
     pub const fn requires(mut self, id: &'s str) -> Self {
-        self.require = Some(id);
+        self.require = Names::One(id);
+        self
+    }
+    /// Require every listed argument ID when this argument is present.
+    /// Replaces all dependency targets; an empty slice removes this rule.
+    pub const fn requires_all(mut self, ids: &'s [&'s str]) -> Self {
+        self.require = Names::Many(ids);
         self
     }
     /// Consume between `min` and `max` values per occurrence, both inclusive.
@@ -174,9 +272,13 @@ impl<'s> Arg<'s> {
     pub const fn long_name(&self) -> Option<&'s str> {
         self.long
     }
-    /// Alternative long option spelling, when configured.
+    /// First alternative long option spelling, when configured.
     pub const fn alias_name(&self) -> Option<&'s str> {
-        self.alias
+        self.alias.first()
+    }
+    /// All alternative long option spellings, in configuration order.
+    pub const fn alias_names(&self) -> &[&'s str] {
+        self.alias.as_slice()
     }
     /// Descriptive help text.
     pub const fn description(&self) -> &'s str {
@@ -206,13 +308,21 @@ impl<'s> Arg<'s> {
     pub const fn choices(&self) -> &'s [&'s str] {
         self.choices
     }
-    /// ID of the mutually exclusive argument, when configured.
+    /// First mutually exclusive argument ID, when configured.
     pub const fn conflict_target(&self) -> Option<&'s str> {
-        self.conflict
+        self.conflict.first()
     }
-    /// ID required when this argument appears, when configured.
+    /// All mutually exclusive argument IDs, in configuration order.
+    pub const fn conflict_targets(&self) -> &[&'s str] {
+        self.conflict.as_slice()
+    }
+    /// First argument ID required when this argument appears, when configured.
     pub const fn requires_target(&self) -> Option<&'s str> {
-        self.require
+        self.require.first()
+    }
+    /// All argument IDs required when this argument appears, in configuration order.
+    pub const fn requires_targets(&self) -> &[&'s str] {
+        self.require.as_slice()
     }
 }
 
@@ -231,7 +341,7 @@ pub struct Command<'s> {
     rules: bool,
     has_alias: bool,
     // Compact, const-prepared metadata. Larger commands retain a linear fallback.
-    long_order: [u16; 256],
+    long_order: [u8; 256],
     long_count: usize,
     required: [u64; 4],
     related: [u64; 4],
@@ -269,16 +379,16 @@ impl<'s> Command<'s> {
         self.related = [0; 4];
         let mut i = 0;
         while i < args.len() {
-            self.has_alias = self.has_alias || args[i].alias.is_some();
+            self.has_alias = self.has_alias || !args[i].alias.is_empty();
             self.rules = self.rules
                 || args[i].required
-                || args[i].conflict.is_some()
-                || args[i].require.is_some();
+                || !args[i].conflict.is_empty()
+                || !args[i].require.is_empty();
             if args.len() <= 256 {
                 if args[i].required {
                     self.required[i / 64] |= 1 << (i % 64);
                 }
-                if args[i].conflict.is_some() || args[i].require.is_some() {
+                if !args[i].conflict.is_empty() || !args[i].require.is_empty() {
                     self.related[i / 64] |= 1 << (i % 64);
                 }
                 if let Some(name) = args[i].long {
@@ -295,7 +405,8 @@ impl<'s> Command<'s> {
                         self.long_order[at] = self.long_order[at - 1];
                         at -= 1;
                     }
-                    self.long_order[at] = i as u16;
+                    // This branch is limited to 256 arguments: 0..=255 fits u8.
+                    self.long_order[at] = i as u8;
                     self.long_count += 1;
                 }
             }
@@ -400,10 +511,21 @@ impl<'s> Command<'s> {
                     return Some(definition(arg.id, "invalid long name"));
                 }
             }
-            if let Some(name) = arg.alias {
+            let aliases = arg.alias.as_slice();
+            let mut alias_index = 0;
+            while alias_index < aliases.len() {
+                let name = aliases[alias_index];
                 if !valid_name(name) || same_option(arg.long, Some(name)) {
                     return Some(definition(arg.id, "invalid or redundant alias"));
                 }
+                let mut previous = 0;
+                while previous < alias_index {
+                    if eq(name, aliases[previous]) {
+                        return Some(definition(arg.id, "invalid or redundant alias"));
+                    }
+                    previous += 1;
+                }
+                alias_index += 1;
             }
             if matches!(arg.kind, Kind::Flag)
                 && (!arg.choices.is_empty() || arg.min != 1 || arg.max != 1)
@@ -411,7 +533,7 @@ impl<'s> Command<'s> {
                 return Some(definition(arg.id, "a flag cannot take values"));
             }
             if arg.is_positional() {
-                if arg.short.is_some() || arg.long.is_some() || arg.alias.is_some() {
+                if arg.short.is_some() || arg.long.is_some() || !arg.alias.is_empty() {
                     return Some(definition(arg.id, "a positional cannot have option names"));
                 }
                 if variable_positional {
@@ -438,23 +560,31 @@ impl<'s> Command<'s> {
                     }
                 }
                 if same_option(arg.long, other.long)
-                    || same_option(arg.long, other.alias)
-                    || same_option(arg.alias, other.long)
-                    || same_option(arg.alias, other.alias)
+                    || other.alias.contains_option(arg.long)
+                    || arg.alias.contains_option(other.long)
+                    || arg.alias.overlaps(&other.alias)
                 {
                     return Some(definition(arg.id, "duplicate long name or alias"));
                 }
                 j += 1;
             }
-            if let Some(id) = arg.conflict {
+            let conflicts = arg.conflict.as_slice();
+            let mut target = 0;
+            while target < conflicts.len() {
+                let id = conflicts[target];
                 if eq(arg.id, id) || self.id_index(id).is_none() {
                     return Some(definition(arg.id, "invalid conflict target"));
                 }
+                target += 1;
             }
-            if let Some(id) = arg.require {
+            let requires = arg.require.as_slice();
+            target = 0;
+            while target < requires.len() {
+                let id = requires[target];
                 if eq(arg.id, id) || self.id_index(id).is_none() {
                     return Some(definition(arg.id, "invalid dependency target"));
                 }
+                target += 1;
             }
             i += 1;
         }
@@ -518,7 +648,7 @@ impl<'s> Command<'s> {
             if self.has_alias {
                 self.args
                     .iter()
-                    .position(|arg| arg.alias.is_some_and(|s| s.as_bytes() == name))
+                    .position(|arg| arg.alias.as_slice().iter().any(|s| s.as_bytes() == name))
             } else {
                 None
             }
@@ -1139,7 +1269,7 @@ impl<'s, 'a, T: input::Input, const WORDS: usize> Parser<'s, 'a, T, WORDS> {
     }
 
     fn validate_relation(&self, arg: &Arg<'s>) -> Result<(), Error<'s>> {
-        if let Some(other) = arg.conflict {
+        for &other in arg.conflict.as_slice() {
             if self
                 .command
                 .id_index(other)
@@ -1148,7 +1278,7 @@ impl<'s, 'a, T: input::Input, const WORDS: usize> Parser<'s, 'a, T, WORDS> {
                 return Err(Error::Conflict { arg: arg.id, other });
             }
         }
-        if let Some(other) = arg.require {
+        for &other in arg.require.as_slice() {
             if !self
                 .command
                 .id_index(other)

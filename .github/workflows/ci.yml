@@ -83,6 +83,8 @@ jobs:
         run: |
           cargo fmt --all --check
           cargo doc --locked --no-deps --all-features
+          cargo build --locked --lib
+          rustdoc --edition=2021 --test README.md --extern zclap=target/debug/libzclap.rlib -D warnings
           python scripts/audit.py
           python -m unittest discover -s scripts -p 'test_*.py' -v
       - name: Compile without an allocator or operating system

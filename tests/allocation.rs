@@ -71,15 +71,22 @@ fn measured(f: impl FnOnce()) -> usize {
 }
 
 const CLI: Command = Command::new("demo").args(&[
-    Arg::flag("verbose").short('v').repeat().requires("input"),
+    Arg::flag("verbose")
+        .short('v')
+        .aliases(&["chatty", "debug"])
+        .repeat()
+        .requires_all(&["input", "mode"])
+        .conflicts_with(&["quiet", "silent"]),
     Arg::value("mode").one_of(&["fast", "safe"]),
     Arg::positional("input").required(),
+    Arg::flag("quiet"),
+    Arg::flag("silent"),
 ]);
 
 #[test]
 fn parsing_validation_errors_and_rendering_allocate_nothing() {
     let count = measured(|| {
-        let argv = ["-vvv", "--mode=fast", "input"];
+        let argv = ["-vv", "--debug", "--mode=fast", "input"];
         let mut parser = CLI.parse(&argv);
         let mut events = 0;
         while parser.next().unwrap().is_some() {
@@ -98,6 +105,16 @@ fn parsing_validation_errors_and_rendering_allocate_nothing() {
         let empty: [&str; 0] = [];
         let error = CLI.parse(&empty).finish().unwrap_err();
         write!(&mut out, "{error}").unwrap();
+
+        for argv in [
+            &["--chatty", "--mode=fast", "--silent", "input"][..],
+            &["--debug", "input"][..],
+        ] {
+            let mut parser = CLI.parse(argv);
+            while parser.next().unwrap().is_some() {}
+            let error = parser.finish().unwrap_err();
+            Style::plain().error(&error, &mut out).unwrap();
+        }
     });
     assert_eq!(count, 0);
 }

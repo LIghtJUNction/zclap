@@ -304,12 +304,25 @@ fn label(out: &mut (impl Write + ?Sized), style: &Style<'_>, arg: &Arg<'_>) -> f
     if let Some(long) = arg.long_name() {
         write!(out, "{}--{}{}", style.option.0, long, style.option.1)?;
     }
-    if let Some(alias) = arg.alias_name() {
+    let aliases = arg.alias_names();
+    if !aliases.is_empty() {
         write!(
             out,
-            "{} (alias: --{}){}",
-            style.option.0, alias, style.option.1
+            "{} ({}: ",
+            style.option.0,
+            if aliases.len() == 1 {
+                "alias"
+            } else {
+                "aliases"
+            }
         )?;
+        for (index, alias) in aliases.iter().enumerate() {
+            if index != 0 {
+                out.write_str(", ")?;
+            }
+            write!(out, "--{alias}")?;
+        }
+        write!(out, "){}", style.option.1)?;
     }
     if arg.takes_value() {
         out.write_char(' ')?;

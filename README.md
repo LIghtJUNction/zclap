@@ -23,8 +23,8 @@ let argv = ["-vv", "--port=8080", "input.txt"];
 let mut parser = CLI.parse(&argv);
 while let Some(event) = parser.next()? {
     match event {
-        Event::Flag { arg: "verbose" } => {},
-        Event::Value { arg, value } => { /* process borrowed &str */ },
+        Event::Flag { arg: "verbose" } => println!("verbose"),
+        Event::Value { arg, value } => println!("{arg}={value}"),
         _ => {},
     }
 }
@@ -43,12 +43,16 @@ to its option. No whitespace splitting, quote interpretation or shell expansion
 is performed: the shell/OS has already separated arguments.
 
 `.required()`, `.repeat()`, `.alias()`, `.one_of()`, `.conflicts()` and
-`.requires()` compose. Relationships refer to IDs in the same command. Each
-builder setting replaces its previous value; aliases and relationship rules
-each hold one target. `.values(min, max)` consumes a range of values, emitting
-one event per value. A new option ends a value group; a subcommand ends it
-once its minimum has been met. A variable positional must be the last positional.
-Required positionals precede optional ones.
+`.requires()` compose. Use `.aliases(&[...])` for multiple alternative names,
+`.conflicts_with(&[...])` to reject any listed argument, and `.requires_all(&[...])`
+to require every listed argument. Relationships use IDs in the same command.
+Single and plural setters replace the corresponding setting; empty lists clear it.
+All spellings share the same event ID, duplicate checks and required state.
+
+`.values(min, max)` consumes a range of values, emitting one event per value.
+A new option ends a value group; a subcommand ends it once its minimum has been
+met. A variable positional must be the last positional. Required positionals
+precede optional ones.
 
 ```rust
 use zclap::{Arg, Command};
@@ -56,12 +60,17 @@ const CLI: Command = Command::new("tool").subcommands(&[
     Command::new("build").args(&[
         Arg::value("mode").one_of(&["debug", "release"]),
         Arg::value("include").short('I').values(1, usize::MAX).repeat(),
+        Arg::flag("package").aliases(&["bundle", "archive"])
+            .requires_all(&["mode", "output"]).conflicts_with(&["check", "dry-run"]),
+        Arg::value("output"),
+        Arg::flag("check"),
+        Arg::flag("dry-run"),
         Arg::positional("source").required(),
     ]),
 ]);
-let argv = ["build", "--mode=release", "main.rs"];
+let argv = ["build", "--bundle", "--mode=release", "--output=app.tar", "main.rs"];
 let mut parser = CLI.parse(&argv);
-while let Some(event) = parser.next()? { /* handle Event::Command and values */ }
+while let Some(event) = parser.next()? { println!("{event:?}"); }
 parser.finish()?;
 # Ok::<(), zclap::Error<'static>>(())
 ```
@@ -109,7 +118,8 @@ the caller's allocation; the parser adds none. The single audited unsafe block
 in the OS adapter reconstructs borrowed suffixes only at validated UTF-8 option
 boundaries. The parsing core contains no unsafe code.
 
-The default parser stores 256 presence bits. For more definitions, use
+The default parser stores 256 presence bits. Alias counts do not consume these
+slots. For more definitions, use
 `command.parse_with::<8, _>(&argv)` for 512 slots (64 per word); input and repeat
 counts have no fixed limit. A capacity shortage returns an error. Definitions
 are checked when built; `command.check()` exposes errors independently.
@@ -122,7 +132,8 @@ and a bare `thumbv7em-none-eabi` no_std target are covered by CI.
 The isolated [`comparison/`](comparison/) project compares the same grammar and
 inputs with clap, lexopt, pico-args and clap_lex at 4–256 definitions. It records
 latency, throughput, allocation requests, binary size and clean compile time.
-On the recorded Linux / Xeon 8573C host (Rust 1.99.1, opt-level 3, thin LTO):
+The initial 0.1.0 measurements on Linux / Xeon 8573C (Rust 1.99.1,
+opt-level 3, thin LTO) were:
 
 | Dense input | zclap | clap | lexopt | pico-args | clap_lex |
 |---|---:|---:|---:|---:|---:|
