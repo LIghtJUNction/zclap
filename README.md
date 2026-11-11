@@ -7,7 +7,7 @@ dependencies. The crate is always `#![no_std]`; optional `std` adds OS strings.
 
 ```toml
 [dependencies]
-zclap = "0.1.3"
+zclap = "0.1.4"
 ```
 
 ```rust
@@ -107,7 +107,7 @@ Wrapping counts Unicode scalar values, not terminal display cells.
 ## no_std, OS strings and capacity
 
 ```toml
-zclap = { version = "0.1.3", default-features = false }
+zclap = { version = "0.1.4", default-features = false }
 ```
 
 `parse(&[&str])` borrows text. `parse_bytes(&[&[u8]])` preserves arbitrary bytes.
