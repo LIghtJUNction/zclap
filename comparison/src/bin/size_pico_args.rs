@@ -1,4 +1,4 @@
-use zclap_comparison::{report, Output};
+use zclap_comparison::{Output, report};
 
 fn main() {
     let input: Vec<_> = std::env::args()

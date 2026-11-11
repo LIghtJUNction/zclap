@@ -3,7 +3,7 @@ use std::ffi::OsString;
 use std::hint::black_box;
 #[cfg(not(feature = "allocation-counting"))]
 use std::time::{Duration, Instant};
-use zclap_comparison::{contribution, contribution_number, name_index, Output};
+use zclap_comparison::{Output, contribution, contribution_number, name_index};
 
 mod scenarios;
 
@@ -91,11 +91,7 @@ impl Fixture {
                 } else {
                     zclap::Arg::flag(name)
                 };
-                if i == 0 {
-                    arg.required()
-                } else {
-                    arg
-                }
+                if i == 0 { arg.required() } else { arg }
             })
             .collect();
         let zclap = zclap::Command::new(command_name).args(Box::leak(args.into_boxed_slice()));

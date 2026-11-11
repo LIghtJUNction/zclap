@@ -450,10 +450,12 @@ fn definition_errors_are_structured() {
         ));
     }
     assert!(Command::new("").check().is_err());
-    assert!(Command::new("demo")
-        .subcommands(&[Command::new("x"), Command::new("x")])
-        .check()
-        .is_err());
+    assert!(
+        Command::new("demo")
+            .subcommands(&[Command::new("x"), Command::new("x")])
+            .check()
+            .is_err()
+    );
 }
 
 #[test]

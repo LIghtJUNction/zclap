@@ -238,9 +238,11 @@ fn all_aliases_are_rendered_in_declaration_order_without_changing_alignment() {
     ]);
     let mut plain = Fixed::<1024>::new();
     Style::plain().help(&ALIASES, &mut plain).unwrap();
-    assert!(plain
-        .as_str()
-        .contains("--output (aliases: --destination, --out, --書込) <output>"));
+    assert!(
+        plain
+            .as_str()
+            .contains("--output (aliases: --destination, --out, --書込) <output>")
+    );
 
     let mut colored = String::new();
     let mut style = Style::plain();
