@@ -505,15 +505,15 @@ impl<'s> Command<'s> {
             if arg.min == 0 || arg.max < arg.min {
                 return Some(definition(arg.id, "invalid value range"));
             }
-            if let Some(c) = arg.short {
-                if c == '-' || c == '=' || (c as u32) <= 32 || c == '\u{7f}' {
-                    return Some(definition(arg.id, "invalid short name"));
-                }
+            if let Some(c) = arg.short
+                && (c == '-' || c == '=' || (c as u32) <= 32 || c == '\u{7f}')
+            {
+                return Some(definition(arg.id, "invalid short name"));
             }
-            if let Some(name) = arg.long {
-                if !valid_name(name) {
-                    return Some(definition(arg.id, "invalid long name"));
-                }
+            if let Some(name) = arg.long
+                && !valid_name(name)
+            {
+                return Some(definition(arg.id, "invalid long name"));
             }
             let aliases = arg.alias.as_slice();
             let mut alias_index = 0;
@@ -558,10 +558,10 @@ impl<'s> Command<'s> {
                 if eq(arg.id, other.id) {
                     return Some(definition(arg.id, "duplicate argument ID"));
                 }
-                if let (Some(a), Some(b)) = (arg.short, other.short) {
-                    if a == b {
-                        return Some(definition(arg.id, "duplicate short name"));
-                    }
+                if let (Some(a), Some(b)) = (arg.short, other.short)
+                    && a == b
+                {
+                    return Some(definition(arg.id, "duplicate short name"));
                 }
                 if same_option(arg.long, other.long)
                     || other.alias.contains_option(arg.long)
@@ -1005,13 +1005,13 @@ impl<'s, 'a, T: input::Input, const WORDS: usize> Parser<'s, 'a, T, WORDS> {
             let index = self.short.map_or(self.cursor, |(i, _)| i);
             return self.fail(Error::Unfinished { index });
         }
-        if let Some(pending) = self.pending {
-            if pending.count < self.command.args[pending.arg].min {
-                return self.fail(Error::MissingValue {
-                    arg: self.command.args[pending.arg].id,
-                    index: pending.start,
-                });
-            }
+        if let Some(pending) = self.pending
+            && pending.count < self.command.args[pending.arg].min
+        {
+            return self.fail(Error::MissingValue {
+                arg: self.command.args[pending.arg].id,
+                index: pending.start,
+            });
         }
         if let Err(error) = self.validate() {
             return self.fail(error);
