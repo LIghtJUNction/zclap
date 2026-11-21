@@ -97,6 +97,25 @@ fn empty_dash_and_terminator() {
 }
 
 #[test]
+fn standalone_dash_is_a_separate_option_value() {
+    for option in ["--port", "-p"] {
+        assert_eq!(
+            run(&BASIC, &[option, "-", "x"]).unwrap(),
+            vec![
+                Event::Value {
+                    arg: "port",
+                    value: "-",
+                },
+                Event::Value {
+                    arg: "input",
+                    value: "x",
+                },
+            ]
+        );
+    }
+}
+
+#[test]
 fn empty_and_negative_attached_values() {
     for option in ["--port=", "-p="] {
         assert_eq!(

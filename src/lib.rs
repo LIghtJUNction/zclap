@@ -252,8 +252,9 @@ impl<'s> Arg<'s> {
     /// Consume between `min` and `max` values per occurrence, both inclusive.
     ///
     /// `min` must be at least one. `usize::MAX` gives an unbounded maximum.
-    /// A new option or, after `min` values, a subcommand ends the group. Put
-    /// values beginning with a dash directly after `=` (or a short option).
+    /// A new option or, after `min` values, a subcommand ends the group. A
+    /// standalone `-` can be a separate value. Attach other option values
+    /// beginning with a dash directly after `=` (or a short option).
     /// A positional with a variable range must be the last positional.
     pub const fn values(mut self, min: usize, max: usize) -> Self {
         self.min = min;

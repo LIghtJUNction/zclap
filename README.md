@@ -37,9 +37,10 @@ parser.finish()?;
 Pass tokens **without the executable name**. Named arguments default to
 `--<id>`; `.long()` changes the spelling. Supports `-v`, `--verbose`, `-vvv`,
 `--port 8080`, `--port=8080`, `-p8080`, `-p=8080`, and positional values.
-`--` ends option and subcommand recognition; `-` is a positional value.
-Empty attached values are valid. A value starting with `-` must be attached
-to its option. No whitespace splitting, quote interpretation or shell expansion
+`--` ends option and subcommand recognition. A standalone `-` can be a separate
+option value (for example, `--port -`) or a positional value. Empty attached
+values are valid. Other option values starting with `-` must be attached to
+their option. No whitespace splitting, quote interpretation or shell expansion
 is performed: the shell/OS has already separated arguments.
 
 `.required()`, `.repeat()`, `.alias()`, `.one_of()`, `.conflicts()` and
